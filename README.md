@@ -47,6 +47,8 @@ Both modules have a timeline with play, a before/after swipe, and InSAR coherenc
 
 ## NASA resources the method follows
 
+The radar measurements come from **ASF DAAC / NASA Earthdata**, linked by the [Dancing with the SARs challenge resources](https://www.spaceappschallenge.org/2026/challenges/dancing-with-the-sars/?tab=resources). All 42 active granules were verified against the live ASF catalog, and fresh GCOV/GUNW study-window reads matched the cached measurements. See the [source audit](docs/handoff/nasa-data-sources.md) for archive URLs, verification scope and results.
+
 - NISAR mission and products: L2 GCOV (geocoded backscatter) and L2 GUNW (geocoded unwrapped interferogram), distributed by ASF DAAC: <https://nisar-docs.asf.alaska.edu/>
 - NASA Earthdata Search: <https://search.earthdata.nasa.gov/>
 - ASF HyP3 on-demand RTC and InSAR processing: <https://hyp3-docs.asf.alaska.edu/>
