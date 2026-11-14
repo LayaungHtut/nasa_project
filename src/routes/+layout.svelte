@@ -3,40 +3,26 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import TopNav from '$lib/components/nav/TopNav.svelte';
 	import SarExplainerModal from '$lib/components/panels/SarExplainerModal.svelte';
-	import LimitationsModal from '$lib/components/panels/LimitationsModal.svelte';
-	import DemoModeController from '$lib/components/stories/DemoModeController.svelte';
-	import { appState } from '$lib/stores/appState.svelte';
+	import JudgeTour from '$lib/components/tour/JudgeTour.svelte';
 
-	let { data, children } = $props();
-
-	$effect(() => {
-		if (data?.events) {
-			appState.setEvents(data.events);
-		}
-	});
+	let { children } = $props();
 </script>
 
 <svelte:head>
-	<title>Dancing with the SARs — NASA NISAR Earth Explorer | Team YOUTHs</title>
+	<title>Dancing with the SARs — NISAR Myanmar Surface Watch | Team YOUTHs</title>
 	<meta
 		name="description"
-		content="Interactive geospatial application using NASA-ISRO NISAR radar data to visualize and explain Earth surface changes, flood inundation, and SAR remote sensing."
+		content="SAR monitoring and early-warning demo for remote Myanmar: permit-compliance checks for mining and forensic linking of landslides to downstream river diversion, using NISAR-style radar and InSAR (simulated scenarios)."
 	/>
 	<link rel="icon" href={favicon} />
 	<link rel="preconnect" href="https://tiles.openfreemap.org" />
 </svelte:head>
 
 <div class="flex min-h-screen flex-col text-slate-100">
-	<!-- Mission Top Navigation -->
 	<TopNav />
-
-	<!-- Main App Content -->
 	<main class="flex flex-1 flex-col">
 		{@render children()}
 	</main>
-
-	<!-- Global Modals & Controllers -->
 	<SarExplainerModal />
-	<LimitationsModal />
-	<DemoModeController />
+	<JudgeTour />
 </div>

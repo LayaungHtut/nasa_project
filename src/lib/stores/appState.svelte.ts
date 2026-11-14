@@ -1,191 +1,59 @@
-import type { ChangeEvent } from '$lib/types/api';
-import { CURATED_EVENTS } from '$lib/data/fixtures';
-import { opticalEvidence } from '$lib/data/evidence';
-import type { RadarReference } from '$lib/types/evidence';
-import { periodPresets } from '$lib/data/timeseries';
+import { SCENARIOS, findPatch } from '$lib/data/scenarios';
+import { TOUR_STEPS } from '$lib/data/tour';
 
-export type LayerViewMode =
-	| 'series'
-	| 'field_timing'
-	| 'landcover'
-	| 'period'
-	| 'compare'
-	| 'baseline'
-	| 'post'
-	| 'difference'
-	| 'change_mask'
-	| 'optical_compare';
-export type Polarization = 'HH' | 'HV';
-export const DEMO_STEP_COUNT = 9;
+/** Map view: one pass, a before/after swipe, or one of the two InSAR layers. */
+export type ScenarioLayer = 'sar' | 'compare' | 'coherence' | 'deformation';
 
 class AppState {
-	events = $state<ChangeEvent[]>(CURATED_EVENTS);
-	selectedEventId = $state<string>('yangon-track40-frame10');
-	selectedEvent = $state<ChangeEvent>(CURATED_EVENTS[0]);
-	activeLayer = $state<LayerViewMode>('compare');
-	/** Radar channel shown in the before/after layers; only HH is used for classification. */
-	polarization = $state<Polarization>('HH');
-	sliderPosition = $state<number>(50); // 0 to 100%
-	opacity = $state<number>(0.85);
-	opticalEvidence = $derived(opticalEvidence(this.selectedEvent));
-	opticalSceneId = $state<string | null>(null);
-	opticalScene = $derived(
-		this.opticalEvidence?.scenes.find((scene) => scene.id === this.opticalSceneId) ??
-			this.opticalEvidence?.scenes.at(-1)
-	);
-	radarReference = $state<RadarReference>('repeat');
-	selectedCandidateId = $state<number | null>(null);
-	selectedCandidate = $derived(
-		this.opticalEvidence?.candidates.find(
-			(candidate) => candidate.component === this.selectedCandidateId
-		)
-	);
-	candidateFocusRequest = $state(0);
-
-	selectCandidate(id: number | null, focus = false) {
-		this.selectedCandidateId = id;
-		if (focus && id !== null) {
-			this.activeLayer = 'optical_compare';
-			this.candidateFocusRequest++;
-		}
-	}
-
-	// Modals & Panels
-	isSarModalOpen = $state<boolean>(false);
-	isLimitationsModalOpen = $state<boolean>(false);
-	isAiPanelExpanded = $state<boolean>(true);
-	isProvenanceExpanded = $state<boolean>(false);
-
-	// Timeline
-	selectedObservationIndex = $state<number>(1); // Default to repeat pass (index 1)
-	/** Index into selectedEvent.timeseries.dates, shown by the 'series' layer. */
-	seriesIndex = $state<number>(0);
-	/** Two passes chosen in 'period' mode; null until the user picks, then the first preset applies. */
-	periodChoice = $state<{ from: number; to: number } | null>(null);
-	periodPresets = $derived(
-		this.selectedEvent.timeseries
-			? periodPresets(
-					this.selectedEvent.timeseries,
-					this.selectedEvent.observation_dates.baseline,
-					this.selectedEvent.observation_dates.post_event
-				)
-			: []
-	);
-	/** Land-cover layer: overlay the two-date apparent water loss on the classes. */
-	showWaterLoss = $state(true);
-	periodRange = $derived(this.periodChoice ?? this.periodPresets[0] ?? null);
-
-	// Demo Mode for Space Apps judges
-	isDemoModeActive = $state<boolean>(false);
-	demoStep = $state<number>(0);
-
-	// Loading and status
-	isLoadingData = $state<boolean>(false);
+	scenarioId = $state(SCENARIOS[0].id);
+	scenario = $derived(SCENARIOS.find((s) => s.id === this.scenarioId) ?? SCENARIOS[0]);
+	/** Selected pass; opens on the latest so the outcome is visible first. */
+	epochIndex = $state(SCENARIOS[0].epochs.length - 1);
+	layer = $state<ScenarioLayer>('sar');
+	sliderPosition = $state(50);
+	showOverlays = $state(true);
+	isSarModalOpen = $state(false);
 	mapError = $state<string | null>(null);
+	/** Judge tour step, 1-based; 0 when the tour is off. */
+	demoStep = $state(0);
+	isDemoModeActive = $derived(this.demoStep > 0);
+	/** Detected Hpakant patch picked on the map or in the panel; only shown on the pass it was found on. */
+	selectedPatchId = $state<string | null>(null);
+	selectedPatch = $derived.by(() => {
+		const p = findPatch(this.scenario, this.selectedPatchId);
+		return p && p.epoch === this.epochIndex ? p : null;
+	});
+	/** Bumped on each pick, so the map zooms to a patch only when one is picked (not on every pass change). */
+	patchFocus = $state(0);
 
-	/**
-	 * Populates the application state with authoritative events loaded from the API / SSR
-	 */
-	setEvents(events: ChangeEvent[]) {
-		if (!events || events.length === 0) return;
-		this.events = events;
-		const found = events.find((e) => e.id === this.selectedEventId);
-		if (found) {
-			this.selectedEvent = found;
-		} else {
-			this.selectedEvent = events[0];
-			this.selectedEventId = events[0].id;
+	selectPatch(id: string | null, zoom = true) {
+		this.selectedPatchId = id;
+		if (id && zoom) this.patchFocus++;
+	}
+
+	selectScenario(id: string) {
+		const s = SCENARIOS.find((x) => x.id === id);
+		if (!s) return;
+		this.scenarioId = id;
+		this.epochIndex = s.epochs.length - 1;
+		this.selectedPatchId = null;
+	}
+
+	/** Moves the tour to step n and sets the map to show it; any n outside the tour ends it. */
+	goToDemoStep(n: number) {
+		const step = TOUR_STEPS[n - 1];
+		if (!step) {
+			this.demoStep = 0;
+			return;
 		}
-	}
-
-	selectEvent(id: string) {
-		const found = this.events.find((e) => e.id === id);
-		if (found) {
-			this.selectedEventId = id;
-			this.selectedEvent = found;
-			this.selectedObservationIndex = Math.min(
-				1,
-				(found.observation_dates.all_observations?.length ?? 1) - 1
-			);
-			this.sliderPosition = 50;
-			this.activeLayer = 'compare';
-			this.seriesIndex = 0;
-			this.periodChoice = null;
-			this.polarization = 'HH';
-			this.opticalSceneId = null;
-			this.radarReference = 'repeat';
-			this.selectedCandidateId = null;
-			this.candidateFocusRequest = 0;
-		}
-	}
-
-	startJudgeDemo() {
-		this.selectEvent('yangon-track40-frame10');
-		this.isDemoModeActive = true;
-		this.demoStep = 1;
-		this.applyDemoStep(1);
-	}
-
-	nextDemoStep() {
-		if (this.demoStep < DEMO_STEP_COUNT) {
-			this.demoStep += 1;
-			this.applyDemoStep(this.demoStep);
-		} else {
-			this.endJudgeDemo();
-		}
-	}
-
-	prevDemoStep() {
-		if (this.demoStep > 1) {
-			this.demoStep -= 1;
-			this.applyDemoStep(this.demoStep);
-		}
-	}
-
-	endJudgeDemo() {
-		this.isDemoModeActive = false;
-		this.demoStep = 0;
-	}
-
-	private applyDemoStep(step: number) {
-		switch (step) {
-			case 1: // Hook: the season animation when the event has one
-				this.activeLayer = this.selectedEvent.timeseries ? 'series' : 'compare';
-				this.seriesIndex = 0;
-				this.sliderPosition = 50;
-				break;
-			case 2: // Fly to Event
-				this.selectEvent('yangon-track40-frame10');
-				break;
-			case 3: // Baseline view (August 27, 2026 reference)
-				this.activeLayer = 'baseline';
-				this.selectedObservationIndex = 0;
-				break;
-			case 4: // Post-Event view (September 8, 2026 repeat pass)
-				this.activeLayer = 'post';
-				this.selectedObservationIndex = 1;
-				break;
-			case 5: // Reveal change detected
-				this.activeLayer = 'change_mask';
-				break;
-			case 6: // HH change map and competing explanations
-				this.isSarModalOpen = false;
-				this.polarization = 'HH';
-				this.activeLayer = 'difference';
-				break;
-			case 7: // Field by field: the per-pixel test with forest as the control
-				this.isSarModalOpen = false;
-				this.activeLayer = this.selectedEvent.timeseries ? 'field_timing' : 'difference';
-				break;
-			case 8: // SAR explainer
-				this.isSarModalOpen = true;
-				break;
-			case 9: // Grounded AI and data provenance
-				this.isSarModalOpen = false;
-				this.isAiPanelExpanded = true;
-				this.isProvenanceExpanded = true;
-				break;
-		}
+		this.demoStep = n;
+		this.isSarModalOpen = false;
+		this.showOverlays = true;
+		this.scenarioId = step.scenarioId;
+		this.epochIndex = step.epochIndex;
+		this.layer = step.layer;
+		this.sliderPosition = 50;
+		this.selectedPatchId = null;
 	}
 }
 

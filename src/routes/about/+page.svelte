@@ -4,20 +4,24 @@
 
 	const futureApplications = [
 		{
-			title: 'Monsoon flood maps every 12 days',
-			body: 'NISAR images the same ground on a 12-day repeat, through cloud. With calibrated thresholds and river-gauge checks, the Ayeyarwady delta and Bago river plains could get flood-extent maps during the season when optical satellites see least.'
+			title: 'Validate the Hpakant result',
+			body: 'Compare the detected change with cloud-free NASA HLS (Landsat and Sentinel-2) imagery from the dry season and with field reports, to measure precision and recall on real ground instead of the null test alone.'
 		},
 		{
-			title: 'Rice-season monitoring (shown here for one season)',
-			body: 'Twelve NISAR passes already show the paddies around Hlawga flooding in late August and brightening as the rice grows into October. Rice is Myanmar’s staple crop and most of it is grown in the monsoon, when clouds hide fields from optical satellites. The same method, scaled to the Ayeyarwady and Bago plains and checked against township crop calendars, could tell agricultural extension officers when fields were planted and which are lagging, without a field visit.'
+			title: 'Permit checks with official boundaries',
+			body: 'With concession polygons from the licensing authority, the permit-check logic shown in the demo could run on the real Hpakant change map. Without verified boundaries the app makes no legality claim.'
 		},
 		{
-			title: 'Reservoir and wetland watch',
-			body: 'Hlawga supplies drinking water to Yangon. Across 12 passes its surface stays radar-bright whatever the wind, which is unusual for open water and worth checking for floating plants such as water hyacinth. Repeat NISAR passes, paired with operator level records, could flag such changes for the water utility every 12 days.'
+			title: 'A landslide watch for Chin State and Kachin',
+			body: 'Monsoon landslides block rivers in remote valleys every year. Coherence loss between consecutive NISAR passes can flag new slides within days, and a dammed lake upstream is an early warning for villages below it.'
 		},
 		{
-			title: 'Ground motion from InSAR',
-			body: 'NISAR interferometric products (GUNW) measure centimetre-scale ground movement. They could map deformation along the Sagaing Fault after earthquakes such as the March 2025 Mandalay earthquake, or test whether parts of Yangon are slowly sinking.'
+			title: 'On-demand processing with ASF HyP3',
+			body: 'HyP3 already produces terrain-corrected backscatter and InSAR products on request in the cloud. Plugging its outputs into this app would replace our simulated layers without changing the interface.'
+		},
+		{
+			title: 'Ground truth before any real alert',
+			body: 'A compliance alert has legal weight. Before use, thresholds must be calibrated against field inspections and known excavation dates, and every alert should go to a person to verify, not straight to enforcement.'
 		}
 	];
 </script>
@@ -62,9 +66,10 @@
 			<p class="mt-2 text-xs leading-relaxed text-slate-200">
 				NASA's "Dancing with the SARs" challenge calls for teams to leverage Synthetic Aperture
 				Radar (SAR) data to make complex Earth surface changes accessible, intuitive, and
-				scientifically transparent. Team YOUTHs built this product around one monsoon season of
-				surface change near our home city of Yangon: 12 NISAR passes over the paddy fields and
-				reservoir at Hlawga, from flooded fields in August to growing rice in October.
+				scientifically transparent. Team YOUTHs built a monitoring and early-warning demo for remote
+				parts of Myanmar where inspectors cannot go and monsoon cloud blinds optical satellites: one
+				module checks whether mining stays inside its permit, the other traces a river that suddenly
+				moved back to the landslide that caused it.
 			</p>
 		</div>
 
@@ -76,10 +81,12 @@
 				<span>Our Philosophy: Scientific Integrity</span>
 			</h2>
 			<p class="mt-2 text-xs leading-relaxed text-slate-200">
-				We strictly distinguish between <strong>NASA observations</strong> (raw calibrated
-				backscatter from ASF DAAC), <strong>our deterministic processing</strong> (speckle filtering
-				and decibel thresholding), and <strong>record-based explanations</strong>. The current
-				summary uses a deterministic template; no live AI model is called.
+				The Hpakant module runs on <strong>real NISAR L2 GCOV and GUNW granules</strong> from NASA's
+				ASF DAAC, and lists every granule it used and every pass it excluded, with the reason. It
+				reports surface change consistent with excavation, with a false-alarm estimate, and never
+				calls it mining or illegal. The permit-check and landslide modules are clearly labelled
+				<strong>simulated</strong> demos: synthetic scenes with fictional sites, operators and permits,
+				showing how those checks work. No AI model generates any text.
 			</p>
 		</div>
 	</section>
@@ -144,49 +151,91 @@
 			class="flex items-center gap-2 border-b border-yonder-500/30 pb-2 text-xl font-bold text-white"
 		>
 			<Cpu class="h-5 w-5 text-yonder-400" />
-			<span>Our Scientific Methodology</span>
+			<span>How Each Module Works</span>
 		</h2>
 
-		<div class="mt-4 space-y-3 text-xs leading-relaxed">
-			<p>
-				Our demonstration compares two L-band GCOV observations of Hlawga Reservoir (August 27 and
-				September 8, 2026) using deterministic thresholding. It flags possible water changes for
-				investigation:
-			</p>
-
-			<ol class="list-inside list-decimal space-y-2 pl-2 text-slate-200">
-				<li>
-					<strong>Radiometric Terrain-Corrected Backscatter:</strong> We ingest geocoded
-					gamma-naught (&gamma;<sup>0</sup>) radar backscatter in the co-polarized (HH) channel.
-				</li>
-				<li>
-					<strong>Lee Speckle Filtering:</strong> Granular speckle noise inherent to coherent radar systems
-					is smoothed using a 3&times;3 Lee filter for this case study. Residual speckle can remain.
-				</li>
-				<li>
-					<strong>Specular Reflection Cutoff:</strong> Smooth open water surfaces reflect microwave beams
-					away from the sensor. We isolate pixels dropping below an empirical threshold (-9.54 dB for
-					this study area).
-				</li>
-				<li>
-					<strong>Connected Component Clustering:</strong> Pockets of detected change smaller than 8 contiguous
-					pixels are rejected to reduce small isolated detections. This can also discard small real changes.
-				</li>
-				<li>
-					<strong>Polarization Quality Check:</strong> We compare the HH and cross-polarized HV channels
-					on both dates, with the product's own interference and noise metadata. In these provisional
-					scenes HV fails our consistency checks, so classification uses HH only.
-				</li>
-				<li>
-					<strong>HH Change Map:</strong> A per-pixel dB difference between the dates shows where the
-					radar return brightened or darkened, beyond the water/land threshold. We then weigh competing
-					physical explanations against the recorded evidence.
-				</li>
-				<li>
-					<strong>Surface Extent Calculation:</strong> Vectorized boundaries are transformed into GeoJSON
-					polygons and area statistics (km²) for high-performance MapLibre WebGL rendering.
-				</li>
-			</ol>
+		<div class="mt-4 grid grid-cols-1 gap-4 text-xs leading-relaxed md:grid-cols-2">
+			<div class="brand-pattern-waves rounded-lg border border-neon-yellow/50 bg-deep-blue/95 p-4">
+				<h3 class="text-sm font-semibold text-white">Hpakant surface change (real NISAR data)</h3>
+				<ol class="mt-2 list-inside list-decimal space-y-1.5 text-slate-200">
+					<li>
+						<strong>Real passes</strong>: NISAR Track 062 (descending), Frame 075, read from ASF
+						DAAC for a 16 km window over the Hpakant jade-mining district.
+					</li>
+					<li>
+						<strong>Pass selection</strong>: one acquisition mode and processing version only.
+						Early-2026 passes with non-physical calibration offsets are excluded and listed.
+					</li>
+					<li>
+						<strong>Lee filter</strong>, then a per-pass offset so stable vegetated ground matches
+						the latest pass.
+					</li>
+					<li>
+						HV down more than <strong>3 dB</strong> on formerly vegetated ground: vegetation loss or new
+						bare ground. HH below −18 dB: new open water.
+					</li>
+					<li>
+						Counted only when <strong>two consecutive passes</strong> agree, in patches of 1 ha or more.
+					</li>
+					<li>
+						<strong>Uncertainty</strong>: the same rule between the two baseline passes gives the
+						false-alarm rate; GUNW coherence is supporting evidence.
+					</li>
+				</ol>
+			</div>
+			<div class="brand-pattern-waves rounded-lg border border-yonder-500/40 bg-deep-blue/95 p-4">
+				<h3 class="text-sm font-semibold text-white">Permit check (simulated demo)</h3>
+				<ol class="mt-2 list-inside list-decimal space-y-1.5 text-slate-200">
+					<li>
+						<strong>Cross-polarised (HV) backscatter</strong> each pass: forest canopy scatters many times
+						(volume scattering) and stays bright; cleared, dug ground does not.
+					</li>
+					<li>
+						<strong>Lee speckle filter</strong> (5 × 5), then the dB ratio against the baseline pass.
+					</li>
+					<li>
+						A drop of more than <strong>3 dB</strong> on formerly vegetated ground marks new clearing.
+					</li>
+					<li>
+						Clearing is split by the <strong>permit polygon</strong>, with a 20 m tolerance band for
+						geolocation error.
+					</li>
+					<li>
+						<strong>InSAR</strong>: coherence loss marks active digging between passes;
+						line-of-sight phase shows the riverbank sinking beside the pit.
+					</li>
+					<li>
+						More than 0.5 ha beyond the band raises a <strong>Compliance Breach Alert</strong>.
+					</li>
+				</ol>
+			</div>
+			<div class="brand-pattern-waves rounded-lg border border-yonder-500/40 bg-deep-blue/95 p-4">
+				<h3 class="text-sm font-semibold text-white">
+					Landslide and river diversion (simulated demo)
+				</h3>
+				<ol class="mt-2 list-inside list-decimal space-y-1.5 text-slate-200">
+					<li>
+						<strong>HH backscatter</strong>: calm water reflects radar away (specular reflection)
+						and looks dark, so each pass maps the river.
+					</li>
+					<li>
+						<strong>Landslide</strong>: return drops more than 3 dB off the channel and InSAR
+						coherence collapses across the pass.
+					</li>
+					<li><strong>Impoundment</strong>: new water upstream of the slide, behind the debris.</li>
+					<li>
+						<strong>Diversion</strong>: new and abandoned channel downstream, and the shift of the
+						channel centre row by row.
+					</li>
+					<li>
+						<strong>Control reach</strong> above the lake: unchanged water rules out a basin-wide flood.
+					</li>
+					<li>
+						<strong>Root cause</strong>: a slide upstream on the same river, within 20 km and 36
+						days before the shift.
+					</li>
+				</ol>
+			</div>
 		</div>
 	</section>
 
@@ -200,8 +249,7 @@
 			<span>What NISAR Could Do Next for Myanmar</span>
 		</h2>
 		<p class="mt-3 text-xs leading-relaxed text-slate-200">
-			Our case study uses two dates and one channel. These are directions a longer NISAR record
-			could support; they are proposals, not results of this project.
+			Next steps from simulation to operation. These are proposals, not results of this project.
 		</p>
 		<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
 			{#each futureApplications as item (item.title)}
@@ -224,30 +272,30 @@
 		</h2>
 		<div class="mt-3 space-y-2 text-xs leading-relaxed text-slate-200">
 			<p>
-				The real observation products originate from the <strong
-					>NASA-ISRO SAR (NISAR) Mission</strong
-				>, archived and distributed publicly by the
-				<strong>Alaska Satellite Facility (ASF) Distributed Active Archive Center (DAAC)</strong>.
-				Synthetic demonstrations are labeled separately and do not represent observed events.
+				The Hpakant module uses real products of the
+				<strong>NASA-ISRO SAR (NISAR) Mission</strong> (L2 GCOV backscatter and L2 GUNW
+				interferograms, provisional release), and the two demo modules are simulated from NISAR's
+				parameters. NISAR products are archived and distributed by the
+				<strong>Alaska Satellite Facility (ASF) Distributed Active Archive Center (DAAC)</strong> and
+				searchable in NASA Earthdata Search. Methods follow the NASA SAR Handbook (SERVIR, 2019) and ASF
+				HyP3 processing documentation.
 			</p>
 			<p>
 				Basemap tiles are provided by <strong>OpenFreeMap</strong>, using OpenMapTiles and
-				OpenStreetMap contributors' data. The independent optical check uses modified Copernicus
-				Sentinel-2 data (2026) via Element 84 Earth Search. Weather records come from ERA5
-				reanalysis via Open-Meteo (CC BY 4.0) and Yangon International Airport METAR reports via the
-				Iowa Environmental Mesonet. Client application engineered with SvelteKit, TypeScript,
-				MapLibre GL JS, and TailwindCSS.
+				OpenStreetMap contributors' data. Client application engineered with SvelteKit, TypeScript,
+				MapLibre GL JS, and TailwindCSS. Simulation and detection in Python (NumPy, SciPy,
+				scikit-image).
 			</p>
 		</div>
 
 		<div class="mt-4 flex flex-wrap gap-4 pt-2">
 			<a
-				href="https://nisar-docs.asf.alaska.edu/gcov/"
+				href="https://nisar-docs.asf.alaska.edu/"
 				target="_blank"
 				rel="noreferrer"
 				class="brand-link-secondary inline-flex items-center gap-1.5 text-xs"
 			>
-				<span>ASF NISAR GCOV Product Guide</span>
+				<span>ASF NISAR Product Guides (GCOV, GUNW)</span>
 				<ExternalLink class="h-3 w-3" />
 			</a>
 			<a

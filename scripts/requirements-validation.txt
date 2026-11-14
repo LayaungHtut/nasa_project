@@ -1,6 +1,0 @@
-# Optional independent optical audit; separate from the NISAR processing service.
-numpy>=2.0
-scipy>=1.14
-rasterio>=1.4
-pyproj>=3.7
-matplotlib>=3.9
