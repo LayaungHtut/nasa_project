@@ -14,20 +14,19 @@ describe('judge tour', () => {
 		}
 	});
 
-	it('labels every step with the true data status of the screen it shows', () => {
+	it('shows only real data and never calls it simulated or a demo', () => {
 		for (const step of TOUR_STEPS) {
 			const s = SCENARIOS.find((x) => x.id === step.scenarioId)!;
 			expect(step.dataStatus, step.title).toBe(s.data_status);
-			if (s.data_status === 'SIMULATED')
-				expect(step.headline + step.description).toMatch(/simulated/i);
+			expect(s.data_status).toBe('REAL');
+			expect(step.headline + step.description, step.title).not.toMatch(/simulated|\bdemo\b/i);
 		}
 	});
 
-	it('starts with the real data and never calls the change mining or illegal', () => {
-		expect(TOUR_STEPS[1].dataStatus).toBe('REAL');
-		const real = TOUR_STEPS.filter((t) => t.dataStatus === 'REAL').map(
-			(t) => t.headline + t.description
-		);
-		for (const text of real) expect(text).not.toMatch(/\billegal\b|mining detected/i);
+	it('never calls the change mining or illegal, or a moving slope a detected landslide', () => {
+		for (const t of TOUR_STEPS)
+			expect(t.headline + t.description).not.toMatch(
+				/\billegal\b|mining detected|landslide detected/i
+			);
 	});
 });

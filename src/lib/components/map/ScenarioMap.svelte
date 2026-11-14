@@ -60,7 +60,7 @@
 		sources: {},
 		layers: [{ id: 'background', type: 'background', paint: { 'background-color': '#07173f' } }]
 	};
-	// Overlay colours: dark-surface categorical steps (validated), neon yellow reserved for the legal boundary.
+	// Overlay colours: dark-surface categorical steps (validated); green stays clear of the LOS ramp's orange and blue.
 	const KIND_COLOR = [
 		'match',
 		['get', 'kind'],
@@ -68,22 +68,12 @@
 		'#d95926',
 		'new_water',
 		'#3987e5',
-		'excavation_inside',
-		'#3987e5',
-		'excavation_outside',
-		'#d95926',
-		'landslide',
-		'#d95926',
-		'impoundment',
-		'#3987e5',
-		'new_channel',
-		'#199e70',
-		'abandoned_channel',
-		'#8a94a8',
-		'river_after',
+		'slope_motion',
 		'#199e70',
 		'#d3dcee'
 	] as const;
+
+	const POLYGONS: ExpressionSpecification = ['==', ['geometry-type'], 'Polygon'];
 
 	function addOverlays(m: MapLibreMap) {
 		const empty = { type: 'FeatureCollection' as const, features: [] };
@@ -92,14 +82,14 @@
 			id: 'overlay-fill',
 			type: 'fill',
 			source: 'overlays',
-			filter: baseFilter('overlay-fill'),
+			filter: POLYGONS,
 			paint: { 'fill-color': KIND_COLOR as never, 'fill-opacity': 0.42 }
 		});
 		m.addLayer({
 			id: 'overlay-outline',
 			type: 'line',
 			source: 'overlays',
-			filter: baseFilter('overlay-outline'),
+			filter: POLYGONS,
 			paint: { 'line-color': KIND_COLOR as never, 'line-width': 1.5 }
 		});
 		// Hover and selection rings for inspectable (real-data) patches; white so they read over both colours.
@@ -116,29 +106,6 @@
 			source: 'overlays',
 			filter: patchFilter(null),
 			paint: { 'line-color': '#ffffff', 'line-width': 3 }
-		});
-		m.addLayer({
-			id: 'overlay-rivers',
-			type: 'line',
-			source: 'overlays',
-			filter: baseFilter('overlay-rivers'),
-			paint: {
-				'line-color': KIND_COLOR as never,
-				'line-width': 2,
-				'line-dasharray': [
-					'case',
-					['==', ['get', 'kind'], 'river_before'],
-					['literal', [2, 2]],
-					['literal', [1, 0]]
-				]
-			}
-		});
-		m.addLayer({
-			id: 'permit-line',
-			type: 'line',
-			source: 'overlays',
-			filter: baseFilter('permit-line'),
-			paint: { 'line-color': '#eafe07', 'line-width': 2.5, 'line-dasharray': [3, 1.5] }
 		});
 	}
 
@@ -239,7 +206,7 @@
 			new AttributionControl({
 				compact: true,
 				customAttribution:
-					'Hpakant: NASA-ISRO NISAR L2 GCOV/GUNW via ASF DAAC · demo modules: simulated · Team YOUTHs'
+					'NASA-ISRO NISAR L2 GCOV/GUNW via ASF DAAC · NASADEM (LP DAAC) · Team YOUTHs'
 			}),
 			'bottom-right'
 		);
@@ -321,7 +288,7 @@
 			(m?.getSource('overlays') as GeoJSONSource)?.setData(data);
 	});
 
-	// Features without an epoch (the permit, the baseline river) always show; the rest only on their pass.
+	// Features without an epoch (moving-slope candidates, measured over all pairs) always show; the rest only on their pass.
 	$effect(() => {
 		const i = appState.epochIndex;
 		const filter: ExpressionSpecification = [
@@ -334,22 +301,14 @@
 			[comparisonMap, appState.showOverlays]
 		] as const) {
 			if (!m) continue;
-			for (const id of ['overlay-fill', 'overlay-outline', 'overlay-rivers', 'permit-line']) {
-				m.setFilter(id, ['all', baseFilter(id), filter]);
+			for (const id of ['overlay-fill', 'overlay-outline']) {
+				m.setFilter(id, ['all', POLYGONS, filter]);
 				m.setLayoutProperty(id, 'visibility', show ? 'visible' : 'none');
 			}
 			// Over InSAR, detections become outlines so they do not hide the measurement beneath.
 			m.setPaintProperty('overlay-fill', 'fill-opacity', insarUrl ? 0.08 : 0.42);
 		}
 	});
-
-	function baseFilter(id: string): ExpressionSpecification {
-		if (id === 'overlay-rivers') return ['==', ['geometry-type'], 'LineString'];
-		if (id === 'permit-line') return ['==', ['get', 'kind'], 'permit'];
-		if (id === 'overlay-outline')
-			return ['all', ['==', ['geometry-type'], 'Polygon'], ['!=', ['get', 'kind'], 'permit']];
-		return ['all', ['==', ['geometry-type'], 'Polygon'], ['!=', ['get', 'kind'], 'permit']];
-	}
 
 	// Radar images: the main map shows the selected pass (or the baseline on the left of the swipe).
 	$effect(() => {
@@ -370,7 +329,8 @@
 
 	// Hover and selection rings.
 	$effect(() => {
-		const selected = appState.selectedPatch?.patch_id ?? null;
+		const selected =
+			appState.selectedPatch?.patch_id ?? appState.selectedCandidate?.candidate_id ?? null;
 		const hovered = hoverPatch?.patch_id ?? null;
 		for (const [m, show] of [
 			[map, appState.showOverlays && !compare],
@@ -388,7 +348,7 @@
 	$effect(() => {
 		void appState.patchFocus;
 		untrack(() => {
-			const p = appState.selectedPatch;
+			const p = appState.selectedPatch ?? appState.selectedCandidate;
 			if (!map || !p) return;
 			const [w, s, e, n] = p.bbox;
 			map.fitBounds(
@@ -451,19 +411,11 @@
 			<input type="checkbox" bind:checked={appState.showOverlays} class="accent-neon-yellow" />
 			<span>Show boundaries and detections</span>
 		</label>
-		{#if scenario.data_status === 'REAL'}
-			<div
-				class="mx-2 mt-1 mb-0.5 hidden rounded border border-neon-yellow/60 bg-electric-blue/50 px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-wider text-neon-yellow uppercase sm:inline-block"
-			>
-				Real NISAR observations · ASF DAAC
-			</div>
-		{:else}
-			<div
-				class="mx-2 mt-1 mb-0.5 hidden rounded border border-rocket-red bg-martian-red px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-wider text-white uppercase sm:inline-block"
-			>
-				Simulated scenario · not a satellite observation
-			</div>
-		{/if}
+		<div
+			class="mx-2 mt-1 mb-0.5 hidden rounded border border-neon-yellow/60 bg-electric-blue/50 px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-wider text-neon-yellow uppercase sm:inline-block"
+		>
+			Real NISAR observations · ASF DAAC
+		</div>
 	</div>
 
 	{#if insarMissing}

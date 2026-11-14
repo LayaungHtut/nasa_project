@@ -44,19 +44,11 @@
 						<span class="font-mono-telemetry text-xs font-semibold text-slate-200">
 							{step.title}
 						</span>
-						{#if step.dataStatus === 'REAL'}
-							<span
-								class="rounded border border-neon-yellow/60 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-neon-yellow uppercase"
-							>
-								Real NISAR data
-							</span>
-						{:else}
-							<span
-								class="rounded border border-rocket-red bg-martian-red px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase"
-							>
-								Simulated demo
-							</span>
-						{/if}
+						<span
+							class="rounded border border-neon-yellow/60 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-neon-yellow uppercase"
+						>
+							Real NISAR data
+						</span>
 					</div>
 					<button
 						type="button"

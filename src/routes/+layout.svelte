@@ -12,7 +12,7 @@
 	<title>Dancing with the SARs — NISAR Myanmar Surface Watch | Team YOUTHs</title>
 	<meta
 		name="description"
-		content="SAR monitoring and early-warning demo for remote Myanmar: permit-compliance checks for mining and forensic linking of landslides to downstream river diversion, using NISAR-style radar and InSAR (simulated scenarios)."
+		content="Real NASA-ISRO NISAR radar over Hpakant, Kachin State, Myanmar: surface change in the jade-mining belt from L2 GCOV backscatter, and slope motion from L2 GUNW InSAR, with uncertainty on every result."
 	/>
 	<link rel="icon" href={favicon} />
 	<link rel="preconnect" href="https://tiles.openfreemap.org" />

@@ -3,19 +3,17 @@
 	import { SCENARIOS } from '$lib/data/scenarios';
 	import ScenarioMap from '$lib/components/map/ScenarioMap.svelte';
 	import TimelineScrubber from '$lib/components/timeline/TimelineScrubber.svelte';
-	import CompliancePanel from '$lib/components/panels/CompliancePanel.svelte';
-	import ForensicsPanel from '$lib/components/panels/ForensicsPanel.svelte';
+	import SlopeMotionPanel from '$lib/components/panels/SlopeMotionPanel.svelte';
 	import ObservedChangePanel from '$lib/components/panels/ObservedChangePanel.svelte';
 	import MethodPanel from '$lib/components/panels/MethodPanel.svelte';
 	import SpaceAppsLogo from '$lib/components/brand/SpaceAppsLogo.svelte';
-	import { Radio, BookOpen, Pickaxe, Mountain, Satellite } from 'lucide-svelte';
+	import { Radio, BookOpen, Mountain, Satellite } from 'lucide-svelte';
 
 	let scenario = $derived(appState.scenario);
-	const icons = { observed: Satellite, mining: Pickaxe, landslide: Mountain };
+	const icons = { observed: Satellite, slope: Mountain };
 	const labels = {
-		observed: 'Hpakant mining · real data',
-		mining: 'Permit check · demo',
-		landslide: 'Landslide & river · demo'
+		observed: 'Hpakant mining · surface change',
+		slope: 'Hpakant slopes · ground motion'
 	};
 	const modules = SCENARIOS.map((s) => ({
 		id: s.id,
@@ -57,19 +55,11 @@
 				>
 					NISAR {scenario.sensor.band} · {scenario.sensor.polarization}
 				</span>
-				{#if scenario.data_status === 'REAL'}
-					<span
-						class="rounded border border-neon-yellow/70 bg-electric-blue/60 px-1.5 py-0.5 font-mono text-[10px] font-bold text-neon-yellow"
-					>
-						REAL NISAR · ASF DAAC
-					</span>
-				{:else}
-					<span
-						class="rounded border border-rocket-red bg-martian-red px-1.5 py-0.5 font-mono text-[10px] font-bold text-white"
-					>
-						SIMULATED
-					</span>
-				{/if}
+				<span
+					class="rounded border border-neon-yellow/70 bg-electric-blue/60 px-1.5 py-0.5 font-mono text-[10px] font-bold text-neon-yellow"
+				>
+					REAL NISAR · ASF DAAC
+				</span>
 			</div>
 		</div>
 	</section>
@@ -120,10 +110,8 @@
 			<div class="flex-1 space-y-4 p-4">
 				{#if scenario.module === 'observed'}
 					<ObservedChangePanel {scenario} />
-				{:else if scenario.module === 'mining'}
-					<CompliancePanel {scenario} />
 				{:else}
-					<ForensicsPanel {scenario} />
+					<SlopeMotionPanel {scenario} />
 				{/if}
 				<MethodPanel {scenario} />
 			</div>

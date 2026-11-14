@@ -1,17 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
 	SCENARIOS,
-	compliance,
 	findPatch,
-	forensics,
 	observedPatches,
 	observedStatus,
-	patchLabel
+	patchLabel,
+	slopeLabel
 } from './scenarios';
-import type { LandslideScenario, MiningScenario, ObservedScenario } from '$lib/types/scenario';
+import type { ObservedScenario, SlopeScenario } from '$lib/types/scenario';
 
-const mining = SCENARIOS.find((s) => s.module === 'mining') as MiningScenario;
-const landslide = SCENARIOS.find((s) => s.module === 'landslide') as LandslideScenario;
+const slopes = SCENARIOS.find((s) => s.module === 'slope') as SlopeScenario;
 const observed = SCENARIOS.find((s) => s.module === 'observed') as ObservedScenario;
 
 describe('real Hpakant observations', () => {
@@ -37,7 +35,7 @@ describe('real Hpakant observations', () => {
 		expect(findPatch(observed, patches[0].patch_id)).toEqual(patches[0]);
 		expect(patchLabel(patches[0])).toBe('Change patch 1');
 		expect(findPatch(observed, 'nope')).toBeNull();
-		expect(findPatch(mining, patches[0].patch_id)).toBeNull();
+		expect(findPatch(slopes, patches[0].patch_id)).toBeNull();
 	});
 
 	it('is labelled real and traces every pass to a NISAR granule', () => {
@@ -69,48 +67,39 @@ describe('real Hpakant observations', () => {
 	});
 });
 
-describe('mining compliance', () => {
-	it('moves from compliant to watch to breach as digging crosses the permit', () => {
-		const levels = mining.epochs.map((_, i) => compliance(mining, i).level);
-		expect(levels).toEqual(['compliant', 'compliant', 'watch', 'breach', 'breach']);
-		expect(compliance(mining, 0).firstBreach).toBe(3);
+describe('real Hpakant slope motion', () => {
+	it('is labelled real and traces every pair to a GUNW and every backdrop to a GCOV granule', () => {
+		expect(slopes.data_status).toBe('REAL');
+		for (const e of slopes.epochs) {
+			expect(e.gunw_granule_id).toMatch(/^NISAR_L2_PR_GUNW_\d{3}_062_D_075_/);
+			expect(e.granule_id).toMatch(/^NISAR_L2_PR_GCOV_\d{3}_062_D_075_/);
+			expect(e.coherence_pair![1]).toBe(e.date);
+		}
+		expect(slopes.provenance.gunw_granules).toEqual(slopes.epochs.map((e) => e.gunw_granule_id));
 	});
 
-	it('explains a breach with measured numbers', () => {
-		const c = compliance(mining, 4);
-		expect(c.reasons.length).toBeGreaterThanOrEqual(2);
-		expect(c.reasons[0]).toContain(`${mining.metrics[4].max_distance_outside_m} m beyond`);
-		expect(c.reasons.join(' ')).not.toMatch(/NaN|undefined/);
-	});
-});
-
-describe('landslide forensics', () => {
-	it('watches, then warns at the slide, then links the diversion to it', () => {
-		const stages = landslide.epochs.map((_, i) => forensics(landslide, i).stage);
-		expect(stages).toEqual(['monitoring', 'monitoring', 'early_warning', 'linked']);
-		const f = forensics(landslide, 3);
-		expect(f.lagDays).toBe(12);
-		expect(f.evidence.every((e) => !/NaN|undefined/.test(e.text))).toBe(true);
-		expect(f.alternatives.find((a) => a.title.startsWith('Monsoon'))?.verdict).toBe('Ruled out');
-	});
-
-	it('refuses to link a slide that is downstream of the shift or too far away', () => {
-		const downstream = {
-			...landslide,
-			linkage: { ...landslide.linkage, slide_is_upstream: false }
-		};
-		expect(forensics(downstream, 3).stage).toBe('unexplained');
-		const far = { ...landslide, linkage: { ...landslide.linkage, river_distance_km: 50 } };
-		expect(forensics(far, 3).stage).toBe('unexplained');
+	it('flags only steep ground moving beyond k times the reference scatter, largest first', () => {
+		const t = slopes.thresholds;
+		const limit = t.sigma_k * slopes.uncertainty.rate_sigma_cm_yr;
+		for (const c of slopes.candidates) {
+			expect(c.slope_deg).toBeGreaterThanOrEqual(t.slope_min_deg - 5); // patch median; edge pixels pass individually
+			expect(Math.abs(c.rate_cm_yr)).toBeGreaterThan(limit * 0.9);
+			expect(c.direction).toBe(c.rate_cm_yr > 0 ? 'toward' : 'away');
+			expect(c.series_cm).toHaveLength(slopes.epochs.length);
+		}
+		const areas = slopes.candidates.map((c) => c.area_m2);
+		expect(areas).toEqual([...areas].sort((a, b) => b - a));
+		const ids = new Set(slopes.geojson.features.map((f) => f.properties?.patch_id));
+		expect(ids).toEqual(new Set(slopes.candidates.map((c) => c.candidate_id)));
+		expect(slopeLabel(slopes.candidates[0] ?? { candidate_id: 's-1' })).toBe('Moving slope 1');
 	});
 });
 
 describe('scenario records', () => {
-	it('label the demos simulated and have one image per pass', () => {
+	it('are all real NISAR data with one metrics row per epoch', () => {
 		for (const s of SCENARIOS) {
-			expect(s.data_status).toBe(s.module === 'observed' ? 'REAL' : 'SIMULATED');
+			expect(s.data_status).toBe('REAL');
 			expect(s.metrics).toHaveLength(s.epochs.length);
-			if (s.module !== 'observed') expect(s.epochs[0].coherence_url).toBeNull();
 		}
 	});
 });

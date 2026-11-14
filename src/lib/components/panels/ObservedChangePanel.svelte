@@ -151,8 +151,7 @@
 		</li>
 		<li>
 			<strong class="text-white">Nothing about legality.</strong> No verified concession boundaries were
-			available, so permit compliance is not assessed. The permit-check module shows how that check works,
-			on simulated data.
+			available, so permit compliance is not assessed.
 		</li>
 		<li>
 			<strong class="text-white">Not elevation loss.</strong> No InSAR deformation is shown here: dug

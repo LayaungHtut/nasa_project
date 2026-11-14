@@ -1,6 +1,6 @@
-import type { LandslideScenario, MiningScenario, ObservedScenario } from '$lib/types/scenario';
+import type { ObservedScenario, SlopeScenario } from '$lib/types/scenario';
 import type { ScenarioLayer } from '$lib/stores/appState.svelte';
-import { SCENARIOS, compliance, forensics, ha, shortDate } from './scenarios';
+import { SCENARIOS, ha, shortDate } from './scenarios';
 
 export interface TourStep {
 	title: string;
@@ -10,13 +10,12 @@ export interface TourStep {
 	epochIndex: number;
 	layer: ScenarioLayer;
 	actionText: string;
-	/** Shown on the tour card so a judge always knows whether a screen is real or simulated. */
-	dataStatus: 'REAL' | 'SIMULATED';
+	/** Shown on the tour card so a judge always knows the screen is real NISAR data. */
+	dataStatus: 'REAL';
 }
 
 const real = SCENARIOS.find((s) => s.module === 'observed') as ObservedScenario;
-const mining = SCENARIOS.find((s) => s.module === 'mining') as MiningScenario;
-const slide = SCENARIOS.find((s) => s.module === 'landslide') as LandslideScenario;
+const slopes = SCENARIOS.find((s) => s.module === 'slope') as SlopeScenario;
 
 const rLast = real.epochs.length - 1;
 const rm = real.metrics[rLast]!;
@@ -25,11 +24,12 @@ const rEnd = real.epochs[rLast];
 const u = real.uncertainty;
 const pct = (r: number) => `${(r * 100).toFixed(r < 0.01 ? 2 : 1)}%`;
 
-const mBreach = compliance(mining, mining.epochs.length - 1).firstBreach;
-const mb = mining.metrics[mBreach];
-const f = forensics(slide, slide.epochs.length - 1);
-const atSlide = slide.metrics[f.slideEpoch];
-const atDiversion = slide.metrics[f.diversionEpoch];
+const sLast = slopes.epochs.length - 1;
+const su = slopes.uncertainty;
+const st = slopes.thresholds;
+const top = slopes.candidates[0];
+const sTotal = slopes.candidates.reduce((a, c) => a + c.area_m2, 0);
+const cmYr = (v: number) => `${v > 0 ? '+' : ''}${v.toFixed(1)} cm/yr`;
 
 /** Every number comes from the scenario records, so the tour can never drift from the panels. */
 export const TOUR_STEPS: TourStep[] = [
@@ -83,43 +83,45 @@ export const TOUR_STEPS: TourStep[] = [
 		scenarioId: real.id,
 		epochIndex: rLast,
 		layer: 'sar',
-		actionText: 'How a permit check would work',
+		actionText: 'Now the slopes',
 		dataStatus: 'REAL'
 	},
 	{
-		title: 'Permit check · demo',
-		headline: `Simulated demo: ${ha(mb.outside_beyond_tolerance_m2)} cleared beyond a permit raises an alert`,
-		description: `If the licensing authority supplied concession boundaries, this check could run on the real change map. Here it runs on a SIMULATED scene with a fictional permit (${mining.permit.permit_id}): clearing more than ${mining.thresholds.tolerance_m} m outside the yellow line, above ${ha(mining.thresholds.breach_outside_m2)}, raises the alert. It is still a lead for a person to verify, not a verdict.`,
-		scenarioId: mining.id,
-		epochIndex: mBreach,
-		layer: 'compare',
-		actionText: 'Landslide demo',
-		dataStatus: 'SIMULATED'
+		title: 'Hpakant slopes · InSAR',
+		headline: `${slopes.epochs.length} real NISAR interferograms measure how Hpakant's slopes moved`,
+		description: `Hpakant's mine-waste slopes fail often, most deadly in the monsoon. Each real L2 GUNW pair (12 or 24 days apart) from ${shortDate(slopes.epochs[0].coherence_pair![0])} to ${shortDate(slopes.epochs[sLast].date)} gives ground motion along the radar's line of sight. This layer is the mean rate from all the pairs: blue moves toward the satellite, orange away. Blank ground could not be read on most pairs, usually because it is dug, flooded or densely forested.`,
+		scenarioId: slopes.id,
+		epochIndex: sLast,
+		layer: 'deformation',
+		actionText: 'Which slopes move?',
+		dataStatus: 'REAL'
 	},
 	{
-		title: 'Landslide · demo',
-		headline: 'Simulated demo: a slope fails and dams a river',
-		description: `In a SIMULATED Chin Hills valley, ${ha(atSlide.landslide_m2)} of slope loses more than ${slide.thresholds.landslide_drop_db} dB of return and coherence on it collapses to ${atSlide.coherence_at_slide?.toFixed(2)}. ${ha(atSlide.impoundment_m2)} of water ponds behind the debris.`,
-		scenarioId: slide.id,
-		epochIndex: f.slideEpoch,
+		title: 'Hpakant slopes · candidates',
+		headline: top
+			? `${slopes.candidates.length} steep patch${slopes.candidates.length === 1 ? '' : 'es'} (${ha(sTotal)}) moved faster than ${st.sigma_k}× the noise`
+			: `No steep slope moved faster than ${st.sigma_k}× the noise`,
+		description: `Flat, steadily coherent ground scatters by ${su.rate_sigma_cm_yr.toFixed(1)} cm/yr; a candidate is ground steeper than ${st.slope_min_deg}° (NASA's NASADEM) moving beyond ${st.sigma_k} times that, the same way on most pairs.${top ? ` The largest, ${ha(top.area_m2)} on a ${top.slope_deg}° slope, moves ${cmYr(top.rate_cm_yr)} along the line of sight.` : ''} These are places to check on the ground, not confirmed landslides: mining cuts and dumping move ground too.`,
+		scenarioId: slopes.id,
+		epochIndex: sLast,
+		layer: 'deformation',
+		actionText: 'What limits this?',
+		dataStatus: 'REAL'
+	},
+	{
+		title: 'Hpakant slopes · limits',
+		headline: 'Line-of-sight motion, not elevation loss and not downslope speed',
+		description: `The radar sees only motion toward or away from itself, so a slope sliding downhill can read as either, or near zero. The height-dependent part of monsoon water vapour is removed, but patchy vapour stays in the noise figure. On ${su.unread_pairs.length} pairs the phase could not be unwrapped here at all, and ground that decorrelates (dark in this coherence layer) cannot be read.`,
+		scenarioId: slopes.id,
+		epochIndex: sLast,
 		layer: 'coherence',
-		actionText: 'Next pass',
-		dataStatus: 'SIMULATED'
-	},
-	{
-		title: 'Landslide · root cause',
-		headline: `Simulated demo: the river moves ${atDiversion.channel_shift_m} m, ${f.lagDays} days after the slide`,
-		description: `${slide.linkage.river_distance_km.toFixed(1)} km downstream the channel shifts, and the app links it to the slide upstream on the same river. A basin-wide flood is ${f.alternatives[0].verdict.toLowerCase()} because water above the lake barely changed. Swipe to see the old and new channel.`,
-		scenarioId: slide.id,
-		epochIndex: f.diversionEpoch,
-		layer: 'compare',
 		actionText: 'Wrap up',
-		dataStatus: 'SIMULATED'
+		dataStatus: 'REAL'
 	},
 	{
 		title: 'Data and next steps',
-		headline: 'Real NISAR where it exists, labelled demos where it does not',
-		description: `The Hpakant result uses ${real.provenance.gcov_granules.length} real GCOV passes and ${real.provenance.gunw_granules.length} GUNW pairs, listed by granule ID in its panel. Next: validate it against dry-season NASA HLS optical imagery and field reports, and add official permit boundaries so the compliance check can run on real data.`,
+		headline: 'Two real NISAR workflows, every number traceable to a granule',
+		description: `Surface change uses ${real.provenance.gcov_granules.length} real GCOV passes and ${real.provenance.gunw_granules.length} GUNW pairs; slope motion uses ${slopes.provenance.gunw_granules.length} GUNW interferograms and NASADEM, each listed by ID in its panel. Next: check both against dry-season NASA HLS optical imagery, field reports and GNSS. A permit check needs official concession boundaries, which are not public, so the app makes no legality claim.`,
 		scenarioId: real.id,
 		epochIndex: rLast,
 		layer: 'sar',

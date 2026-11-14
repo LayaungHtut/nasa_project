@@ -9,15 +9,15 @@
 		},
 		{
 			title: 'Permit checks with official boundaries',
-			body: 'With concession polygons from the licensing authority, the permit-check logic shown in the demo could run on the real Hpakant change map. Without verified boundaries the app makes no legality claim.'
+			body: 'With concession polygons from the licensing authority, the change map could be split into inside and outside each permit. Those boundaries are not public, so the app makes no legality claim.'
 		},
 		{
-			title: 'A landslide watch for Chin State and Kachin',
-			body: 'Monsoon landslides block rivers in remote valleys every year. Coherence loss between consecutive NISAR passes can flag new slides within days, and a dammed lake upstream is an early warning for villages below it.'
+			title: 'More frames across Kachin and Shan State',
+			body: 'The slope-motion method runs on any NISAR frame with GUNW pairs. Extending it to the landslide-prone valleys of northern Shan State and the rest of Kachin needs only more downloads, then field checks of what it flags.'
 		},
 		{
 			title: 'On-demand processing with ASF HyP3',
-			body: 'HyP3 already produces terrain-corrected backscatter and InSAR products on request in the cloud. Plugging its outputs into this app would replace our simulated layers without changing the interface.'
+			body: 'HyP3 already produces terrain-corrected backscatter and InSAR products on request in the cloud. Using it would let the app follow new passes without downloading granule windows by hand.'
 		},
 		{
 			title: 'Ground truth before any real alert',
@@ -66,10 +66,10 @@
 			<p class="mt-2 text-xs leading-relaxed text-slate-200">
 				NASA's "Dancing with the SARs" challenge calls for teams to leverage Synthetic Aperture
 				Radar (SAR) data to make complex Earth surface changes accessible, intuitive, and
-				scientifically transparent. Team YOUTHs built a monitoring and early-warning demo for remote
-				parts of Myanmar where inspectors cannot go and monsoon cloud blinds optical satellites: one
-				module checks whether mining stays inside its permit, the other traces a river that suddenly
-				moved back to the landslide that caused it.
+				scientifically transparent. Team YOUTHs built a monitoring tool for Hpakant, Kachin State,
+				where inspectors cannot go and monsoon cloud blinds optical satellites. Both modules run on
+				real NISAR data: one maps surface change in the jade-mining belt, the other measures how its
+				landslide-prone slopes move.
 			</p>
 		</div>
 
@@ -81,12 +81,12 @@
 				<span>Our Philosophy: Scientific Integrity</span>
 			</h2>
 			<p class="mt-2 text-xs leading-relaxed text-slate-200">
-				The Hpakant module runs on <strong>real NISAR L2 GCOV and GUNW granules</strong> from NASA's
-				ASF DAAC, and lists every granule it used and every pass it excluded, with the reason. It
-				reports surface change consistent with excavation, with a false-alarm estimate, and never
-				calls it mining or illegal. The permit-check and landslide modules are clearly labelled
-				<strong>simulated</strong> demos: synthetic scenes with fictional sites, operators and permits,
-				showing how those checks work. No AI model generates any text.
+				The Hpakant module runs on <strong>real NISAR L2 GCOV and GUNW granules</strong> from NASA's ASF
+				DAAC, and lists every granule it used and every pass it excluded, with the reason. It reports
+				surface change consistent with excavation, with a false-alarm estimate, and never calls it mining
+				or illegal. The slope module measures line-of-sight ground motion from real GUNW interferograms
+				and NASADEM slope, and calls what it finds places to check, not confirmed landslides. There is
+				no simulated data in the app, and no AI model generates any text.
 			</p>
 		</div>
 	</section>
@@ -183,56 +183,33 @@
 					</li>
 				</ol>
 			</div>
-			<div class="brand-pattern-waves rounded-lg border border-yonder-500/40 bg-deep-blue/95 p-4">
-				<h3 class="text-sm font-semibold text-white">Permit check (simulated demo)</h3>
+			<div class="brand-pattern-waves rounded-lg border border-neon-yellow/50 bg-deep-blue/95 p-4">
+				<h3 class="text-sm font-semibold text-white">Hpakant slope motion (real NISAR InSAR)</h3>
 				<ol class="mt-2 list-inside list-decimal space-y-1.5 text-slate-200">
 					<li>
-						<strong>Cross-polarised (HV) backscatter</strong> each pass: forest canopy scatters many times
-						(volume scattering) and stays bright; cleared, dug ground does not.
+						<strong>Real interferograms</strong>: every 12-day NISAR L2 GUNW pair for the same Track
+						062 Frame 075 window, read from ASF DAAC.
 					</li>
 					<li>
-						<strong>Lee speckle filter</strong> (5 × 5), then the dB ratio against the baseline pass.
+						<strong>Line-of-sight motion</strong> from the unwrapped phase, minus the product's own ionosphere
+						screen; positive is toward the satellite (ISCE3 convention).
 					</li>
 					<li>
-						A drop of more than <strong>3 dB</strong> on formerly vegetated ground marks new clearing.
+						Only <strong>coherent</strong> pixels (≥ 0.3) inside an unwrapping connected component are
+						read; each pair is tied to flat, coherent reference ground.
 					</li>
 					<li>
-						Clearing is split by the <strong>permit polygon</strong>, with a 20 m tolerance band for
-						geolocation error.
+						<strong>Mean rate</strong> per pixel over the measured pairs; gaps between pairs are not filled
+						in.
 					</li>
 					<li>
-						<strong>InSAR</strong>: coherence loss marks active digging between passes;
-						line-of-sight phase shows the riverbank sinking beside the pit.
+						<strong>Candidate</strong>: ground steeper than 20° in NASA's NASADEM moving faster than
+						3× the reference scatter, the same way on most pairs.
 					</li>
 					<li>
-						More than 0.5 ha beyond the band raises a <strong>Compliance Breach Alert</strong>.
-					</li>
-				</ol>
-			</div>
-			<div class="brand-pattern-waves rounded-lg border border-yonder-500/40 bg-deep-blue/95 p-4">
-				<h3 class="text-sm font-semibold text-white">
-					Landslide and river diversion (simulated demo)
-				</h3>
-				<ol class="mt-2 list-inside list-decimal space-y-1.5 text-slate-200">
-					<li>
-						<strong>HH backscatter</strong>: calm water reflects radar away (specular reflection)
-						and looks dark, so each pass maps the river.
-					</li>
-					<li>
-						<strong>Landslide</strong>: return drops more than 3 dB off the channel and InSAR
-						coherence collapses across the pass.
-					</li>
-					<li><strong>Impoundment</strong>: new water upstream of the slide, behind the debris.</li>
-					<li>
-						<strong>Diversion</strong>: new and abandoned channel downstream, and the shift of the
-						channel centre row by row.
-					</li>
-					<li>
-						<strong>Control reach</strong> above the lake: unchanged water rules out a basin-wide flood.
-					</li>
-					<li>
-						<strong>Root cause</strong>: a slide upstream on the same river, within 20 km and 36
-						days before the shift.
+						A candidate is a <strong>landslide indicator to check</strong>, not a confirmed slide;
+						only the height-dependent part of the troposphere is removed, so patchy water vapour
+						stays in the noise.
 					</li>
 				</ol>
 			</div>
@@ -249,7 +226,7 @@
 			<span>What NISAR Could Do Next for Myanmar</span>
 		</h2>
 		<p class="mt-3 text-xs leading-relaxed text-slate-200">
-			Next steps from simulation to operation. These are proposals, not results of this project.
+			Next steps from research to operation. These are proposals, not results of this project.
 		</p>
 		<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
 			{#each futureApplications as item (item.title)}
@@ -272,10 +249,11 @@
 		</h2>
 		<div class="mt-3 space-y-2 text-xs leading-relaxed text-slate-200">
 			<p>
-				The Hpakant module uses real products of the
+				The app uses real products of the
 				<strong>NASA-ISRO SAR (NISAR) Mission</strong> (L2 GCOV backscatter and L2 GUNW
-				interferograms, provisional release), and the two demo modules are simulated from NISAR's
-				parameters. NISAR products are archived and distributed by the
+				interferograms, provisional release) for both modules, and terrain slope from
+				<strong>NASADEM</strong> (NASA/JPL, distributed by the LP DAAC). NISAR products are archived
+				and distributed by the
 				<strong>Alaska Satellite Facility (ASF) Distributed Active Archive Center (DAAC)</strong> and
 				searchable in NASA Earthdata Search. Methods follow the NASA SAR Handbook (SERVIR, 2019) and ASF
 				HyP3 processing documentation.
@@ -283,8 +261,7 @@
 			<p>
 				Basemap tiles are provided by <strong>OpenFreeMap</strong>, using OpenMapTiles and
 				OpenStreetMap contributors' data. Client application engineered with SvelteKit, TypeScript,
-				MapLibre GL JS, and TailwindCSS. Simulation and detection in Python (NumPy, SciPy,
-				scikit-image).
+				MapLibre GL JS, and TailwindCSS. Detection in Python (NumPy, SciPy, scikit-image).
 			</p>
 		</div>
 
