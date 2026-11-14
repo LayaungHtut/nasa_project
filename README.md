@@ -1,122 +1,110 @@
-# Dancing with the SARs - NISAR Earth Explorer
+# Dancing with the SARs - NISAR Myanmar Surface Watch
 
 Team **YOUTHs**, Yangon - Prepared for the **2026 NASA Space Apps Challenge**
 
-An interactive story of one monsoon rice season north of Yangon, told through **12 NASA-ISRO NISAR radar passes** (June 16 to November 7, 2026) over Hlawga Reservoir and the paddy fields around it. Watch the fields flood and green through the clouds, see how a land-cover map turned a two-date "water loss" puzzle into a rice-growth signal, and learn why a changed radar signal does not necessarily mean a flood.
+A SAR monitoring and early-warning demo for remote parts of Myanmar, where inspectors cannot go and monsoon cloud blinds optical satellites for weeks. Two modules show what NASA-ISRO NISAR's L-band radar (24 cm wavelength, 12-day repeat) and InSAR can watch through the clouds.
 
-**Headline finding:** a two-date comparison (Aug 27 vs Sep 8) flagged 4.517 km² of "apparent water loss" near the reservoir. Checked against the independent ESA WorldCover map, **92% of it lies on paddy fields and only 0.031 km² on the reservoir**. Across the season, the paddy fields are darkest on Aug 27 (flooded fields look like water) and then brighten by 2.0 dB relative to forest by Oct 14, as rice grows above the standing water. Tested patch by patch, 72% of paddy brightened by more than 1 dB, against 4% of forest, the control. The fields changed, not the reservoir. See the [time-series analysis](docs/science/time-series.md).
+> **Data status: simulated.** Both modules run on synthetic radar scenes built from NISAR mission parameters. They are not satellite observations. Sites, operators and permits are fictional, and locations are illustrative. Every screen is labelled **SIMULATED**. The detection is real code: every number in the app is measured from the simulated images, never typed in.
 
-## What you can explore
+## The two modules
 
-- **Monsoon Series:** play all 12 NISAR passes on the map, and follow paddy, reservoir and built-up land pass by pass in a chart that removes the scene-wide brightness shift by comparing each surface with forest.
-- **Compare Periods:** swipe between any two of the 12 passes, or pick a suggested period such as "Flooded → grown" (Aug 27 → Oct 14). A readout gives the days between them and how much paddy, reservoir and built-up land changed relative to forest, and warns when the two passes use different processing versions.
-- **Land Cover:** paddy fields, the reservoir and built-up land from ESA WorldCover, with the two-date "apparent water loss" in white on top, so you can see that it falls on the fields, not the reservoir.
-- **Field Timing:** a map of when each paddy field was darkest (most likely flooded, around planting) before its radar return rose, with the forest false-positive rate in the legend.
-- A Sentinel-2 greenness (NDVI) chart on the same fields, showing honestly why optical data cannot confirm the radar rise in a cloudy monsoon (8 of 37 scenes usable).
-- A synchronized before/after swipe map with one shared grayscale range for both dates (-15 to +5 dB for Hlawga), in HH or HV.
-- An HH change map showing where the radar return brightened or darkened between the dates.
-- An HH/HV polarization comparison with the products' own interference and noise metadata. In these provisional scenes HV fails our consistency checks, so classification uses HH only.
-- Five competing physical explanations for the change, each with evidence for and against and the observation that would settle it, including a test against recorded wind and rain at both acquisition times.
-- Baseline and repeat observations, acquisition dates in UTC, and two-scene playback.
-- A separate candidate-change layer with downloadable GeoJSON and observation records.
-- **Download analysis report:** one self-contained HTML file (about 0.5 MB, works offline, prints to PDF) with the findings, the season chart and table, the land-cover and field-timing maps, the competing explanations, independent checks, method, limits and sources. It is built from the same records as the app (`/api/events/<id>/report`), and only real observations get one.
-- Processing parameters, source granule identifiers, heuristic score, and pipeline statistics.
-- An independent Sentinel-2 check with dated optical overlays, agreement/disagreement counts, and downloadable evidence.
-- An **Optical Evidence** swipe mode: choose either radar date and one of three Sentinel-2 images, with the acquisition-time gap displayed on the map.
-- Click any of 46 candidate markers, or select one in **Explore candidate evidence**, to inspect its area, dates, reference classifications, and missing coverage.
-- SAR physics explanations, a nine-step judge tour, and ideas for future NISAR applications in Myanmar.
-- A deterministic, record-based explanation template. The current application does **not** call a live AI model.
+### 1. Mining compliance: digging beyond the permit
 
-## The real case study
+A fictional sand and gravel concession, MC-07, beside a river. The yellow polygon is the permitted boundary. Five passes, 12 days apart:
 
-| Item                            | Recorded value                                                           |
-| ------------------------------- | ------------------------------------------------------------------------ |
-| Location                        | Hlawga Reservoir, Yangon Region, Myanmar                                 |
-| Acquisitions                    | 12 passes, June 16 to November 7, 2026; detailed pair Aug 27 and Sep 8   |
-| Product                         | NISAR L2 GCOV, Track 40 / Frame 10, frequency A, HH intensity (HHHH)     |
-| Study area                      | 196 km²; 10 m pixel spacing                                              |
-| Processing                      | 3 x 3 Lee filtering; -9.54 dB threshold; minimum 8-pixel change clusters |
-| New-inundation candidate        | 0.056 km², 556 pixels                                                    |
-| Heuristic score                 | 0.639; not a statistical probability                                     |
-| Apparent water loss             | 4.517 km² after cluster filtering                                        |
-| Classified water before / after | 5.856 / 0.571 km² before change-cluster filtering                        |
+- **Radar pass:** HV backscatter. Forest canopy scatters radar many times (volume scattering) and stays bright. Cleared, dug ground does not, so a drop of more than 3 dB marks new clearing.
+- **Detections:** new clearing inside the permit (blue) and outside it (orange), with a 20 m tolerance band for geolocation error.
+- **InSAR coherence:** active digging destroys coherence between passes.
+- **InSAR deformation:** line-of-sight phase shows the riverbank beside the pit moving away from the satellite (slumping) once digging leaves the permit.
+- **Compliance Breach Alert:** fires when more than 0.5 ha is cleared beyond the band. The storyline goes from within the permit, to a watch (0.3 ha past the line on Day −24), to a breach (9.8 ha on Day −12, 25 ha and 350 m beyond the boundary by Day 0). A pass-by-pass table shows each step.
 
-**Interpretation remains uncertain.** The recorded sensitivity sweep shows that the candidate area changes substantially with threshold and filter settings. The larger apparent water loss lies almost entirely on paddy fields (ESA WorldCover), which points to the rice fields changing rather than the reservoir; no crop calendar or field survey has confirmed it. No independent ground truth confirms flooding or reservoir drawdown. Pixel spacing is not a claim of independent spatial resolution.
+### 2. Landslide and river diversion: a forensic timeline
 
-This case study can guide inspection and teach SAR interpretation. Confirm physical changes with independent imagery, reservoir records, and relevant weather observations before using them in decisions. Synthetic demonstrations are labeled explicitly and must not be presented as observations.
+A fictional mountain valley in the Chin Hills. Four passes, 12 days apart:
 
-**Season check completed:** all 12 Track 40 / Frame 10 passes were analysed; the 10 not on disk were read remotely, fetching only the 14 km window (about 0.17% of each roughly 6 GB granule). Every surface brightens and darkens together from pass to pass, following recent rain (correlation 0.69), so the app compares each surface with forest. The Oct 26 and Nov 7 passes use newer processing (`NISAR_L2_GCOV_V1`) that reads about 2 dB darker everywhere; they are shown but not compared on the fixed threshold. A metadata comparison of the two versions shows identical processing flags, no noise correction in either, and an unchanged noise floor; the software release changed. The reservoir stays bright on every pass regardless of wind (correlation -0.02), but drops 5.4 dB relative to forest in the newer products while land moves under 0.7 dB, so part of that brightness is likely processing. See the [time-series analysis](docs/science/time-series.md).
+- **Day −24:** InSAR measures a slope creeping 1.3 cm away from the satellite.
+- **Day −12, early warning:** the slope fails. Return drops more than 3 dB (forest stripped to debris), coherence collapses to 0.06, and a lake starts ponding behind the debris dam.
+- **Day 0, Automated Root-Cause Insight:** 3.8 km downstream, the river has moved up to 290 m. The app links the shift to the slide 12 days earlier and upstream on the same river.
+- **Alternatives tested:** a basin-wide flood is ruled out, because water in the reach above the lake changed by at most 3%. Gradual meander migration is also ruled out (290 m in 12 days), and dredging is judged unlikely.
 
-**Independent optical check completed:** Sentinel-2 scenes within ±3 days provide no paired clear coverage over the candidates. In an exploratory ±7-day comparison (August 24 and September 13), 9 candidate cells change from optical land to water, 101 remain land, and 446 are unknown. The reference is coarser and temporally displaced; the water-change interpretation remains unconfirmed. See the [independent optical report](docs/science/independent-optical-validation.md) and [dated overlays](data/validation/yangon-track40-frame10/optical-comparison.png).
+Water is dark because calm water reflects radar away (specular reflection), so each pass maps the river, and a moved channel appears as a dark line in a new place.
 
-**Polarization check completed:** HV is brighter than HH on both dates and shifts 1.6 dB over unchanged land while HH shifts 0.1 dB. The product reports an HV interference likelihood of 23.0 on August 27 and no RFI mitigation. HH carries the surface signal here. The HH change map shows about 20% of the study area brightening by more than 1 dB, concentrated in surrounding paddy fields. See the [polarization analysis](docs/science/polarization-analysis.md).
+Both modules use a timeline with play, a before/after swipe against the baseline pass, and coherence and deformation layers. Each panel lists the method, the thresholds and the detector's accuracy against the simulation's own ground truth (mining: precision 100%, recall 98%; landslide: precision 100%, recall 72%).
 
-**Weather check completed:** both acquisition mornings (05:32 Myanmar time) were near calm. Yangon airport reported 0 and at most 1 m/s, and ERA5 gives 2.1 m/s on both. Wind therefore does not explain why the reservoir was brighter on the second date, and the earlier "wind-roughened water" explanation is now weakly supported. The cause remains open. See the [weather check](docs/science/weather-check.md).
+## NASA resources the method follows
 
-See the [scientific validation report](docs/science/real-data-validation.md), [methodology](docs/science/methodology.md), and [limitations](docs/science/limitations.md). The validation report records historical findings; its old frontend architecture description is superseded by the data flow below.
+- NISAR mission and products: L2 GCOV (geocoded backscatter) and L2 GUNW (geocoded unwrapped interferogram), distributed by ASF DAAC: <https://nisar-docs.asf.alaska.edu/>
+- NASA Earthdata Search: <https://search.earthdata.nasa.gov/>
+- ASF HyP3 on-demand RTC and InSAR processing: <https://hyp3-docs.asf.alaska.edu/>
+- The SAR Handbook (NASA SERVIR, 2019): <https://ntrs.nasa.gov/citations/20190002563>
 
-## Run locally
+With real data, the simulated images would be replaced by GCOV backscatter and GUNW coherence and displacement for the same area and dates. The app's data contract (`src/lib/types/scenario.ts`) would not change.
 
-Use Node.js 22.12+ (or a compatible newer version) and npm. From the repository root:
+## How the simulated data are made
 
-```sh
-npm ci
+`scripts/build_scenarios.py` builds each scene:
+
+1. Terrain, forest, rivers and the evolving change (pit growth, slope failure, lake, channel shift) on a UTM grid with NISAR GCOV pixel sizes (10 m and 20 m).
+2. Backscatter for each pass with multiplicative gamma speckle (8 looks).
+3. InSAR coherence and line-of-sight displacement for each 12-day pair, with atmospheric noise. Phase is masked where coherence is below 0.3.
+4. Detection, reusing the project's NISAR processing code (`services/processing`):
+   - a Lee speckle filter;
+   - log-ratio change detection;
+   - water thresholds;
+   - coherence masks;
+   - connected-component cleaning;
+   - vectorization to GeoJSON.
+5. Every metric is computed from those detections and written to `src/lib/data/scenarios/<id>.json`, with images in `static/scenarios/<id>/`.
+
+The generator is seeded, so it's reproducible. A test rebuilds both scenarios and fails if the committed JSON differs from a rebuild.
+
+```bash
+python scripts/build_scenarios.py
+```
+
+## Run it
+
+```bash
+npm install
 npm run dev
 ```
 
-On Windows PowerShell, use `npm.cmd` if execution policy blocks `npm.ps1`. Open the local URL printed by Vite. Committed processed previews and metadata support the web demo without downloading the raw satellite files. Basemap tiles require internet access.
+The site is fully static: the scenario records are bundled, and the images are served from `static/`. It can be deployed to any static or Node host.
 
-```sh
-npm run check
-npm test
-npm run build
-npm run preview
+## Checks
+
+```bash
+npx svelte-check            # types
+npx eslint src              # lint
+npx vitest run --project server   # alert and root-cause logic
+python -m pytest            # scenario storyline, regression, NISAR readers and filters
 ```
 
-With the production preview running, verify the optical explorer in a second terminal:
-
-```sh
-node scripts/check_optical_explorer.mjs http://127.0.0.1:4173
-```
-
-This Playwright check covers the bundled geometry worker, candidate clicks, date gaps, swipe controls, mobile width, failed optical loads, and recovery to radar views. It deliberately disables the remote basemap to verify that local observations and evidence remain usable.
-
-`npm test` runs the configured server unit suite. Browser interaction testing is separate. The application needs a server runtime with access to `data/processed/`, `data/fixtures/`, and `data/validation/`; configure the SvelteKit deployment adapter for your host and include those directories. No hosted deployment is configured here.
-
-## Data flow and reproducibility
+## Project layout
 
 ```text
-NISAR GCOV HDF5 files
-  -> AOI read and quality mask
-  -> Lee filtering, dB conversion, thresholding, cluster filtering
-  -> data/processed/<event-id>/{metadata.json,statistics.json,change.geojson,*.png}
-  -> SvelteKit server loader and /api/events routes
-  -> shared presentation and interactive map
+src/
+  routes/+page.svelte          the dashboard: module picker, map, timeline, analysis panel
+  routes/about/                science and team page
+  lib/components/map/          ScenarioMap (MapLibre, swipe compare, overlays), legend, slider
+  lib/components/panels/       CompliancePanel, ForensicsPanel, MethodPanel, SAR explainer
+  lib/components/timeline/     pass timeline with play and alert markers
+  lib/data/scenarios.ts        compliance() and forensics(): alert levels and root cause, tested
+  lib/data/scenarios/*.json    generated scenario records
+static/scenarios/              generated radar, coherence and displacement images
+scripts/build_scenarios.py     simulation and detection
+services/processing/           NISAR GCOV readers (local and remote), Lee filter, geo, vectorizer
+scripts/                       ASF search, download, product inspection, Earthdata login check
 ```
 
-The server reads processed outputs directly, overriding catalog fixtures. The real offline event imports the same metadata and statistics, and its geometry fallback uses the processed GeoJSON. Shared presentation functions generate timeline steps and explanatory text from these records. The separate Python API is optional; it is not required by the SvelteKit application.
+## Limits
 
-To reproduce the pixel processing:
+- The scenes are simulated, so real NISAR scenes will be harder. Slope, soil moisture, crop cycles, layover and shadow in steep terrain all change backscatter, so thresholds must be calibrated on real data.
+- InSAR line-of-sight motion is not vertical motion. A metres-deep pit decorrelates and gives no phase at all: coherence loss, not displacement, is the digging signal there.
+- A compliance alert has legal weight. Real use needs permit boundaries from the licensing authority, calibration against field inspections, and a person to verify every alert before any action.
 
-1. Install Python dependencies from `services/processing/requirements.txt` in a virtual environment.
-2. Obtain the two granules named in `data/processed/yangon-track40-frame10/metadata.json` through ASF/Earthdata using your own credentials. Search/download helpers are in `scripts/`; never commit credentials or raw downloads.
-3. Place the HDF5 files in `data/raw/` and run the exact real-mode command in the [validation report](docs/science/real-data-validation.md), under Audit finding 3, adding `--display-range-db -15 5`. It specifies the AOI, threshold and filter size. Re-running that command replaces the processed outputs for this event. Then run the polarimetry command in the [polarization analysis](docs/science/polarization-analysis.md#reproduce) to regenerate the HV previews, HH change map and `polarization.json`, and `python -m services.processing.timeseries --event-id yangon-track40-frame10` for the 12-pass season record (it reads the other passes remotely; see the [time-series analysis](docs/science/time-series.md)). `python -m services.processing.ndvi --event-id yangon-track40-frame10` regenerates the Sentinel-2 check and `python scripts/compare_processing_versions.py` the processing-version record.
-4. Compare the regenerated metrics with the table above. Interpret changes in calibration or parameters explicitly rather than silently replacing the narrative.
+## Credits
 
-Raw products total approximately 12 GB and are gitignored. The current app visualizes prepared, georeferenced PNG previews; it does not provide arbitrary worldwide processing, a tiled COG service, or validated operational flood mapping.
+Radar parameters and methods: NASA-ISRO NISAR, ASF DAAC, NASA Earthdata, NASA SAR Handbook. Basemap: OpenFreeMap, OpenMapTiles, OpenStreetMap contributors. Built with SvelteKit, TypeScript, MapLibre GL JS, Tailwind CSS, NumPy, SciPy and scikit-image. Brand: NASA Space Apps Challenge 2026 guidelines and official logos.
 
-## Sources and attribution
-
-- [ASF NISAR GCOV product guide](https://nisar-docs.asf.alaska.edu/gcov/)
-- [NASA NISAR mission](https://science.nasa.gov/mission/nisar/)
-- Radar observations: NASA/ISRO NISAR, distributed by ASF DAAC / NASA Earthdata.
-- Land cover: ESA WorldCover 10 m 2021 v200 (© ESA WorldCover project, CC BY 4.0).
-- Independent optical reference: modified Copernicus Sentinel data (2026), via Element 84 Earth Search; acquisition identifiers and source URLs are retained in `data/validation/`.
-- Weather: ERA5 reanalysis via [Open-Meteo](https://open-meteo.com/) (CC BY 4.0); Yangon International Airport (VYYY) METAR reports via the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/). Raw responses are kept in `data/validation/yangon-track40-frame10/weather/`.
-- Change detection and interpretation: Team YOUTHs.
-- Basemap: OpenFreeMap, OpenMapTiles and OpenStreetMap contributors; attribution is displayed on the map.
-
-## Sharing the project
-
-Use the in-app downloads to share the analysis report, observation record, candidate polygons, and statistics. This project is released under the open-source [MIT License](LICENSE). Third-party data, basemaps and dependencies retain their own terms.
-"# nasa_project" 
+MIT License.

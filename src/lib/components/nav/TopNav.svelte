@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { appState } from '$lib/stores/appState.svelte';
 	import SpaceAppsLogo from '$lib/components/brand/SpaceAppsLogo.svelte';
-	import { Radio, Play, Info, BookOpen, Globe2 } from 'lucide-svelte';
+	import { Radio, Info, Globe2 } from 'lucide-svelte';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 </script>
@@ -66,17 +66,7 @@
 					: 'hover:bg-electric-blue/30 hover:text-white'}"
 			>
 				<Globe2 class="h-4 w-4 text-yonder-400" />
-				<span>Earth Explorer</span>
-			</a>
-			<a
-				href={resolve('/stories')}
-				class="flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-colors {page.url
-					.pathname === '/stories'
-					? 'border border-neon-yellow/60 bg-electric-blue/50 text-neon-yellow'
-					: 'hover:bg-electric-blue/30 hover:text-white'}"
-			>
-				<BookOpen class="h-4 w-4 text-yonder-400" />
-				<span>Story Mode</span>
+				<span>Surface Watch</span>
 			</a>
 			<a
 				href={resolve('/about')}
@@ -90,7 +80,7 @@
 			</a>
 		</nav>
 
-		<!-- Right: Action buttons & Judge Demo Mode -->
+		<!-- Right: SAR explainer -->
 		<div class="flex items-center gap-2">
 			<!-- SAR Physics Explainer button -->
 			<button
@@ -103,21 +93,6 @@
 				<Radio class="h-4 w-4 animate-pulse text-neon-yellow" />
 				<span class="hidden sm:inline">How NISAR Sees It</span>
 				<span class="sm:hidden">SAR 101</span>
-			</button>
-
-			<!-- Dedicated Space Apps Judge Demo Mode (Brand Guide p. 14-16 primary button) -->
-			<button
-				type="button"
-				onclick={() => appState.startJudgeDemo()}
-				class="brand-btn-primary flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs shadow-md active:scale-[0.98]"
-			>
-				<Play class="h-4 w-4 fill-deep-blue" />
-				<span>Judge Demo</span>
-				<span
-					class="py-0.2 hidden rounded bg-deep-blue/15 px-1 font-mono text-[10px] tracking-tight text-deep-blue sm:inline"
-				>
-					105s
-				</span>
 			</button>
 		</div>
 	</div>

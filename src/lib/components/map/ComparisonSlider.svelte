@@ -1,17 +1,13 @@
 <script lang="ts">
-	import { formatAcquisitionDate } from '$lib/data/presentation';
 	import { appState } from '$lib/stores/appState.svelte';
 	import { ChevronsLeftRight, ArrowLeft, ArrowRight } from 'lucide-svelte';
-	import { timeGap } from '$lib/data/evidence';
-	let optical = $derived(
-		appState.activeLayer === 'optical_compare' ? appState.opticalScene : undefined
-	);
 
-	let period = $derived.by(() => {
-		const range = appState.activeLayer === 'period' ? appState.periodRange : null;
-		const dates = appState.selectedEvent.timeseries?.dates;
-		return range && dates ? { from: dates[range.from].date, to: dates[range.to].date } : undefined;
-	});
+	let {
+		leftLabel,
+		leftDate,
+		rightLabel,
+		rightDate
+	}: { leftLabel: string; leftDate: string; rightLabel: string; rightDate: string } = $props();
 
 	let containerEl = $state<HTMLDivElement | null>(null);
 	let isDragging = $state(false);
@@ -59,29 +55,13 @@
 			e.preventDefault();
 		}
 	}
-
-	let baselineDate = $derived(
-		formatAcquisitionDate(
-			period?.from ??
-				(optical && appState.radarReference === 'repeat'
-					? appState.selectedEvent.observation_dates.post_event
-					: appState.selectedEvent.observation_dates.baseline)
-		)
-	);
-	let postDate = $derived(
-		formatAcquisitionDate(
-			period?.to ?? optical?.datetime ?? appState.selectedEvent.observation_dates.post_event
-		)
-	);
 </script>
 
 <div
 	bind:this={containerEl}
 	class="pointer-events-none absolute inset-0 z-20 overflow-hidden select-none"
 	role="region"
-	aria-label={optical
-		? 'Radar and Optical Comparison Slider'
-		: 'Before and After Radar Comparison Slider'}
+	aria-label="Before and after radar comparison slider"
 >
 	<!-- Left Side Label (Baseline) -->
 	<div
@@ -90,12 +70,9 @@
 		<ArrowLeft class="h-3 w-3 text-yonder-400" />
 		<div>
 			<div class="text-[10px] font-semibold tracking-wider text-slate-300 uppercase">
-				{optical ? 'NISAR · HH radar' : period ? 'Period start' : 'Baseline Observation'}
+				{leftLabel}
 			</div>
-			<div class="font-mono-telemetry font-bold text-yonder-400">{baselineDate}</div>
-			{#if optical}<div class="text-[10px] text-slate-300">
-					{appState.radarReference} · UTC
-				</div>{/if}
+			<div class="font-mono-telemetry font-bold text-yonder-400">{leftDate}</div>
 		</div>
 	</div>
 
@@ -105,12 +82,9 @@
 	>
 		<div>
 			<div class="text-[10px] font-semibold tracking-wider text-slate-300 uppercase">
-				{optical ? 'Sentinel-2 · Optical' : period ? 'Period end' : 'Repeat Observation'}
+				{rightLabel}
 			</div>
-			<div class="font-mono-telemetry font-bold text-neon-yellow">{postDate}</div>
-			{#if optical}<div class="text-[10px] text-slate-200">
-					{timeGap(optical, appState.radarReference)}
-				</div>{/if}
+			<div class="font-mono-telemetry font-bold text-neon-yellow">{rightDate}</div>
 		</div>
 		<ArrowRight class="h-3 w-3 text-neon-yellow" />
 	</div>
@@ -128,7 +102,7 @@
 		aria-valuenow={appState.sliderPosition}
 		aria-valuemin="0"
 		aria-valuemax="100"
-		aria-label={optical ? 'Radar and Optical Comparison Divider' : 'Radar Comparison Divider'}
+		aria-label="Radar comparison divider"
 		onpointerdown={handlePointerDown}
 		onpointermove={handlePointerMove}
 		onpointerup={handlePointerUp}
