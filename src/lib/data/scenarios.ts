@@ -1,13 +1,38 @@
-import type { LandslideScenario, MiningScenario, Scenario } from '$lib/types/scenario';
+import type {
+	LandslideScenario,
+	MiningScenario,
+	ObservedScenario,
+	Scenario
+} from '$lib/types/scenario';
+import observed from './scenarios/hpakant-observed.json';
 import mining from './scenarios/mining-compliance-mc07.json';
 import landslide from './scenarios/landslide-river-diversion.json';
 
-/** Built by scripts/build_scenarios.py; every number here was measured from the simulated images. */
-export const SCENARIOS = [mining, landslide] as unknown as Scenario[];
+/** Real NISAR first (scripts/build_hpakant.py), then the two simulated demos (scripts/build_scenarios.py). */
+export const SCENARIOS = [observed, mining, landslide] as unknown as Scenario[];
 
 export const ha = (m2: number) => `${(m2 / 10_000).toFixed(1)} ha`;
 export const shortDate = (iso: string) =>
 	new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+
+export type ObservedStage = 'baseline' | 'awaiting' | 'change' | 'within_noise';
+
+export interface ObservedStatus {
+	stage: ObservedStage;
+	/** First pass whose confirmed change exceeds the null-test upper bound, or -1. */
+	firstChange: number;
+}
+
+/** A change counts only when its area exceeds what the baseline-pair null test could produce by itself. */
+export function observedStatus(s: ObservedScenario, i: number): ObservedStatus {
+	const beyond = (m: ObservedScenario['metrics'][number]) =>
+		m !== null && m.disturbed_m2 + m.new_water_m2 > m.expected_false_upper_m2;
+	const firstChange = s.metrics.findIndex(beyond);
+	const m = s.metrics[i];
+	const stage: ObservedStage =
+		i < 2 ? 'baseline' : m === null ? 'awaiting' : beyond(m) ? 'change' : 'within_noise';
+	return { stage, firstChange };
+}
 
 export type ComplianceLevel = 'compliant' | 'watch' | 'breach';
 

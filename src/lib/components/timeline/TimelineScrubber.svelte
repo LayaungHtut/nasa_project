@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { appState } from '$lib/stores/appState.svelte';
-	import { compliance, forensics, shortDate } from '$lib/data/scenarios';
+	import { compliance, forensics, observedStatus, shortDate } from '$lib/data/scenarios';
 	import { Calendar, Play, Pause, TriangleAlert } from 'lucide-svelte';
 
 	let scenario = $derived(appState.scenario);
 	let observations = $derived(scenario.epochs);
 	/** Playback belongs to one module, so switching module stops it without an effect. */
 	let playingId = $state<string | null>(null);
-	let isPlaying = $derived(playingId === appState.scenarioId);
+	// The judge tour drives the pass itself, so playback pauses while it runs.
+	let isPlaying = $derived(playingId === appState.scenarioId && !appState.isDemoModeActive);
 	/** Passes where an alert first fires get a marker on the track. */
 	let flagged = $derived.by(() => {
 		const s = scenario;
+		if (s.module === 'observed') return new Set([observedStatus(s, 0).firstChange]);
 		if (s.module === 'mining') return new Set([compliance(s, 0).firstBreach]);
 		const f = forensics(s, 0);
 		return new Set([f.slideEpoch, f.diversionEpoch]);
@@ -37,7 +39,9 @@
 		<div class="flex items-center gap-2">
 			<Calendar class="h-4 w-4 text-yonder-400" />
 			<span class="text-[11px] font-bold tracking-wider text-white uppercase">
-				{observations.length} NISAR passes · {scenario.sensor.repeat_days}-day repeat · simulated
+				{observations.length} NISAR passes · {scenario.data_status === 'REAL'
+					? `Track ${scenario.module === 'observed' ? scenario.provenance.track : ''} · real`
+					: `${scenario.sensor.repeat_days}-day repeat · simulated`}
 			</span>
 		</div>
 		<div class="flex items-center gap-1.5">

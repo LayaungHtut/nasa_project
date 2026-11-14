@@ -1,9 +1,15 @@
 <script lang="ts">
 	import { appState } from '$lib/stores/appState.svelte';
 	import SpaceAppsLogo from '$lib/components/brand/SpaceAppsLogo.svelte';
-	import { Radio, Info, Globe2 } from 'lucide-svelte';
+	import { Radio, Info, Globe2, Play } from 'lucide-svelte';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
+
+	async function startTour() {
+		if (page.url.pathname !== '/') await goto(resolve('/'));
+		appState.goToDemoStep(1);
+	}
 </script>
 
 <header
@@ -80,8 +86,21 @@
 			</a>
 		</nav>
 
-		<!-- Right: SAR explainer -->
+		<!-- Right: judge tour + SAR explainer -->
 		<div class="flex items-center gap-2">
+			<button
+				type="button"
+				onclick={startTour}
+				class="brand-btn-primary flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs shadow-md active:scale-[0.98]"
+			>
+				<Play class="h-4 w-4 fill-deep-blue" />
+				<span>Judge Tour</span>
+				<span
+					class="hidden rounded bg-deep-blue/15 px-1 font-mono text-[10px] tracking-tight text-deep-blue sm:inline"
+				>
+					2 min
+				</span>
+			</button>
 			<!-- SAR Physics Explainer button -->
 			<button
 				type="button"

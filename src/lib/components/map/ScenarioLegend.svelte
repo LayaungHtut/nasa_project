@@ -5,19 +5,24 @@
 	let layer = $derived(appState.layer);
 	let vmax = $derived(s.module === 'mining' ? 5 : 3);
 	let items = $derived(
-		s.module === 'mining'
+		s.module === 'observed'
 			? [
-					{ color: '#eafe07', label: 'Permitted concession boundary', line: true },
-					{ color: '#3987e5', label: 'New clearing inside the permit' },
-					{ color: '#d95926', label: 'New clearing outside the permit' }
+					{ color: '#d95926', label: 'Vegetation loss / new bare ground' },
+					{ color: '#3987e5', label: 'New open water' }
 				]
-			: [
-					{ color: '#d95926', label: 'Detected landslide' },
-					{ color: '#3987e5', label: 'Water ponding behind the debris' },
-					{ color: '#199e70', label: 'New river channel / course' },
-					{ color: '#8a94a8', label: 'Abandoned channel' },
-					{ color: '#d3dcee', label: 'River course on the baseline pass', line: true }
-				]
+			: s.module === 'mining'
+				? [
+						{ color: '#eafe07', label: 'Permitted concession boundary', line: true },
+						{ color: '#3987e5', label: 'New clearing inside the permit' },
+						{ color: '#d95926', label: 'New clearing outside the permit' }
+					]
+				: [
+						{ color: '#d95926', label: 'Detected landslide' },
+						{ color: '#3987e5', label: 'Water ponding behind the debris' },
+						{ color: '#199e70', label: 'New river channel / course' },
+						{ color: '#8a94a8', label: 'Abandoned channel' },
+						{ color: '#d3dcee', label: 'River course on the baseline pass', line: true }
+					]
 	);
 </script>
 
@@ -45,7 +50,8 @@
 		<div class="text-[10px] text-slate-400">Blank where coherence &lt; 0.3: phase unreadable</div>
 	{:else}
 		<div class="font-bold text-white">
-			Radar backscatter, {s.sensor.polarization} · {s.sensor.pixel_m} m pixels
+			Radar backscatter, {s.module === 'observed' ? 'HV' : s.sensor.polarization} · {s.sensor
+				.pixel_m} m pixels
 		</div>
 		<div class="mt-1 h-2 rounded" style="background: linear-gradient(90deg, #000, #fff)"></div>
 		<div class="flex justify-between text-[10px] text-slate-300">

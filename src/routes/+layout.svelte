@@ -3,6 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import TopNav from '$lib/components/nav/TopNav.svelte';
 	import SarExplainerModal from '$lib/components/panels/SarExplainerModal.svelte';
+	import JudgeTour from '$lib/components/tour/JudgeTour.svelte';
 
 	let { children } = $props();
 </script>
@@ -23,4 +24,5 @@
 		{@render children()}
 	</main>
 	<SarExplainerModal />
+	<JudgeTour />
 </div>

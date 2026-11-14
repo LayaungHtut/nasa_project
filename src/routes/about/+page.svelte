@@ -4,8 +4,12 @@
 
 	const futureApplications = [
 		{
-			title: 'Run the mining check on real NISAR passes',
-			body: 'Search NASA Earthdata for NISAR L2 GCOV and GUNW products over licensed sand, gravel and jade concessions, with permit polygons supplied by the licensing authority, and compare each new 12-day pass with the last.'
+			title: 'Validate the Hpakant result',
+			body: 'Compare the detected change with cloud-free NASA HLS (Landsat and Sentinel-2) imagery from the dry season and with field reports, to measure precision and recall on real ground instead of the null test alone.'
+		},
+		{
+			title: 'Permit checks with official boundaries',
+			body: 'With concession polygons from the licensing authority, the permit-check logic shown in the demo could run on the real Hpakant change map. Without verified boundaries the app makes no legality claim.'
 		},
 		{
 			title: 'A landslide watch for Chin State and Kachin',
@@ -77,11 +81,12 @@
 				<span>Our Philosophy: Scientific Integrity</span>
 			</h2>
 			<p class="mt-2 text-xs leading-relaxed text-slate-200">
-				Both modules run on <strong>simulated</strong> radar scenes built from NISAR mission parameters,
-				and every screen says so. The detection itself is real code: Lee speckle filtering, log-ratio
-				change detection, water thresholds and coherence masks measure every number from the simulated
-				images, and because the simulation knows its own truth we publish the detector's accuracy against
-				it. Sites, operators and permits are fictional. No AI model generates any text.
+				The Hpakant module runs on <strong>real NISAR L2 GCOV and GUNW granules</strong> from NASA's
+				ASF DAAC, and lists every granule it used and every pass it excluded, with the reason. It
+				reports surface change consistent with excavation, with a false-alarm estimate, and never
+				calls it mining or illegal. The permit-check and landslide modules are clearly labelled
+				<strong>simulated</strong> demos: synthetic scenes with fictional sites, operators and permits,
+				showing how those checks work. No AI model generates any text.
 			</p>
 		</div>
 	</section>
@@ -150,8 +155,36 @@
 		</h2>
 
 		<div class="mt-4 grid grid-cols-1 gap-4 text-xs leading-relaxed md:grid-cols-2">
+			<div class="brand-pattern-waves rounded-lg border border-neon-yellow/50 bg-deep-blue/95 p-4">
+				<h3 class="text-sm font-semibold text-white">Hpakant surface change (real NISAR data)</h3>
+				<ol class="mt-2 list-inside list-decimal space-y-1.5 text-slate-200">
+					<li>
+						<strong>Real passes</strong>: NISAR Track 062 (descending), Frame 075, read from ASF
+						DAAC for a 16 km window over the Hpakant jade-mining district.
+					</li>
+					<li>
+						<strong>Pass selection</strong>: one acquisition mode and processing version only.
+						Early-2026 passes with non-physical calibration offsets are excluded and listed.
+					</li>
+					<li>
+						<strong>Lee filter</strong>, then a per-pass offset so stable vegetated ground matches
+						the latest pass.
+					</li>
+					<li>
+						HV down more than <strong>3 dB</strong> on formerly vegetated ground: vegetation loss or new
+						bare ground. HH below −18 dB: new open water.
+					</li>
+					<li>
+						Counted only when <strong>two consecutive passes</strong> agree, in patches of 1 ha or more.
+					</li>
+					<li>
+						<strong>Uncertainty</strong>: the same rule between the two baseline passes gives the
+						false-alarm rate; GUNW coherence is supporting evidence.
+					</li>
+				</ol>
+			</div>
 			<div class="brand-pattern-waves rounded-lg border border-yonder-500/40 bg-deep-blue/95 p-4">
-				<h3 class="text-sm font-semibold text-white">Mining compliance</h3>
+				<h3 class="text-sm font-semibold text-white">Permit check (simulated demo)</h3>
 				<ol class="mt-2 list-inside list-decimal space-y-1.5 text-slate-200">
 					<li>
 						<strong>Cross-polarised (HV) backscatter</strong> each pass: forest canopy scatters many times
@@ -177,7 +210,9 @@
 				</ol>
 			</div>
 			<div class="brand-pattern-waves rounded-lg border border-yonder-500/40 bg-deep-blue/95 p-4">
-				<h3 class="text-sm font-semibold text-white">Landslide and river diversion</h3>
+				<h3 class="text-sm font-semibold text-white">
+					Landslide and river diversion (simulated demo)
+				</h3>
 				<ol class="mt-2 list-inside list-decimal space-y-1.5 text-slate-200">
 					<li>
 						<strong>HH backscatter</strong>: calm water reflects radar away (specular reflection)
@@ -237,9 +272,10 @@
 		</h2>
 		<div class="mt-3 space-y-2 text-xs leading-relaxed text-slate-200">
 			<p>
-				The radar layers in this app are <strong>simulated</strong> from the parameters of the
-				<strong>NASA-ISRO SAR (NISAR) Mission</strong>, whose real products (L2 GCOV backscatter and
-				L2 GUNW interferograms) are archived and distributed by the
+				The Hpakant module uses real products of the
+				<strong>NASA-ISRO SAR (NISAR) Mission</strong> (L2 GCOV backscatter and L2 GUNW
+				interferograms, provisional release), and the two demo modules are simulated from NISAR's
+				parameters. NISAR products are archived and distributed by the
 				<strong>Alaska Satellite Facility (ASF) Distributed Active Archive Center (DAAC)</strong> and
 				searchable in NASA Earthdata Search. Methods follow the NASA SAR Handbook (SERVIR, 2019) and ASF
 				HyP3 processing documentation.

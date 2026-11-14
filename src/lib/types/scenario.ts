@@ -1,8 +1,8 @@
-/** Shape of src/lib/data/scenarios/*.json, written by scripts/build_scenarios.py. */
+/** Shape of src/lib/data/scenarios/*.json: simulated demos from scripts/build_scenarios.py, real NISAR from scripts/build_hpakant.py. */
 import type { FeatureCollection } from 'geojson';
 
-export type ScenarioModule = 'mining' | 'landslide';
-/** Only simulated scenarios exist today; real observations would carry 'REAL'. */
+export type ScenarioModule = 'observed' | 'mining' | 'landslide';
+/** REAL: measured from NISAR granules. SIMULATED: synthetic demo scenes. */
 export type ScenarioDataStatus = 'SIMULATED' | 'REAL';
 export type Corner = [number, number];
 
@@ -13,6 +13,10 @@ export interface Epoch {
 	sar_url: string;
 	coherence_url: string | null;
 	displacement_url: string | null;
+	/** Real data only: the GCOV granule of this pass, and the GUNW pair ending on it. */
+	granule_id?: string;
+	gunw_granule_id?: string | null;
+	coherence_pair?: [string, string] | null;
 }
 
 export interface MiningMetrics {
@@ -59,7 +63,8 @@ interface ScenarioBase {
 		looks: number;
 	};
 	epochs: Epoch[];
-	validation: { note: string; recall: number; precision: number };
+	/** Null when there is no independent reference to score against. */
+	validation: { note: string; recall: number | null; precision: number | null };
 	geojson: FeatureCollection;
 }
 
@@ -98,4 +103,51 @@ export interface LandslideScenario extends ScenarioBase {
 	};
 }
 
-export type Scenario = MiningScenario | LandslideScenario;
+/** Surface change measured on one pass, against the baseline composite; confirmed on two consecutive passes. */
+export interface ObservedMetrics {
+	disturbed_m2: number;
+	new_water_m2: number;
+	drop_db_median: number | null;
+	coherence_disturbed: number | null;
+	coherence_reference: number | null;
+	/** False-alarm area if errors on two passes were independent, and the upper bound if they were not. */
+	expected_false_m2: number;
+	expected_false_upper_m2: number;
+	clusters: number;
+}
+
+export interface ObservedScenario extends ScenarioBase {
+	module: 'observed';
+	/** Null on the baseline passes and the first pass after them (nothing to confirm against yet). */
+	metrics: (ObservedMetrics | null)[];
+	thresholds: {
+		drop_db: number;
+		vegetated_below_reference_db: number;
+		water_db: number;
+		min_cluster_m2: number;
+		calibration_tolerance_db: number;
+		coherence_low: number;
+		lee_window_px: number;
+	};
+	uncertainty: {
+		null_test: string;
+		single_pass_false_rate: number;
+		confirmed_false_rate: number;
+		vegetated_m2: number;
+		reference_offsets_db: number[];
+		notes: string[];
+	};
+	provenance: {
+		source_archive: string;
+		track: number;
+		frame: number;
+		orbit_direction: string;
+		epsg: number;
+		gcov_granules: string[];
+		gunw_granules: string[];
+		excluded: { date: string; granule_id: string; reason: string }[];
+		unreadable: string[];
+	};
+}
+
+export type Scenario = ObservedScenario | MiningScenario | LandslideScenario;

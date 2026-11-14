@@ -56,6 +56,10 @@
 	const KIND_COLOR = [
 		'match',
 		['get', 'kind'],
+		'disturbed',
+		'#d95926',
+		'new_water',
+		'#3987e5',
 		'excavation_inside',
 		'#3987e5',
 		'excavation_outside',
@@ -173,7 +177,8 @@
 		m.addControl(
 			new AttributionControl({
 				compact: true,
-				customAttribution: 'Simulated NISAR-like radar layers (not observations) · Team YOUTHs'
+				customAttribution:
+					'Hpakant: NASA-ISRO NISAR L2 GCOV/GUNW via ASF DAAC · demo modules: simulated · Team YOUTHs'
 			}),
 			'bottom-right'
 		);
@@ -349,19 +354,32 @@
 			<input type="checkbox" bind:checked={appState.showOverlays} class="accent-neon-yellow" />
 			<span>Show boundaries and detections</span>
 		</label>
-		<div
-			class="mx-2 mt-1 mb-0.5 hidden rounded border border-rocket-red bg-martian-red px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-wider text-white uppercase sm:inline-block"
-		>
-			Simulated scenario · not a satellite observation
-		</div>
+		{#if scenario.data_status === 'REAL'}
+			<div
+				class="mx-2 mt-1 mb-0.5 hidden rounded border border-neon-yellow/60 bg-electric-blue/50 px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-wider text-neon-yellow uppercase sm:inline-block"
+			>
+				Real NISAR observations · ASF DAAC
+			</div>
+		{:else}
+			<div
+				class="mx-2 mt-1 mb-0.5 hidden rounded border border-rocket-red bg-martian-red px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-wider text-white uppercase sm:inline-block"
+			>
+				Simulated scenario · not a satellite observation
+			</div>
+		{/if}
 	</div>
 
 	{#if insarMissing}
 		<div
 			class="absolute top-1/2 left-1/2 z-30 w-72 -translate-x-1/2 -translate-y-1/2 rounded-lg border border-yonder-400/60 bg-deep-blue/95 p-3 text-center text-xs text-slate-100 shadow-xl"
 		>
-			InSAR compares two passes. Pick a later pass on the timeline to see the
-			{appState.layer === 'coherence' ? 'coherence' : 'deformation'} between it and the pass before.
+			{#if scenario.module === 'observed' && appState.layer === 'deformation'}
+				No deformation layer for the real data: dug ground decorrelates within 12 days, and the
+				atmospheric and ionospheric corrections were not validated for this frame.
+			{:else}
+				InSAR compares two passes. Pick a later pass on the timeline to see the
+				{appState.layer === 'coherence' ? 'coherence' : 'deformation'} between it and the pass before.
+			{/if}
 		</div>
 	{/if}
 
