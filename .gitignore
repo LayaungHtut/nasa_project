@@ -1,0 +1,52 @@
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# NISAR raw downloads (large, re-fetchable, never commit)
+data/raw/**
+!data/raw/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+services/api/.venv/
+services/processing/.venv/
+
+# Earthdata Login credentials -- never commit
+.netrc
+*.netrc
+
+# Intermediate numpy arrays (large binary rasters)
+*.npy
+!data/processed/demo-yangon-fixture/*.npy
+
+# Processing experiments
+data/processed/_experiments/**
+
+# Scratch scripts
+scratch/
+
+# Local logs and third-party reference material (not our work; large)
+debug.log
+docs/Space Apps Brand Guide/

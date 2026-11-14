@@ -1,0 +1,255 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
+/* NASA Space Apps Brand Guidelines (Updated June 25, 2026):
+ * Palette: Blue Yonder, Neon Blue, Electric Blue, Deep Blue, Rocket Red, Martian Red, Neon Yellow, White
+ * Typefaces: Fira Sans (Black/Bold), Overpass (Light/Regular/SemiBold/Bold/Italic), Fira Code (Regular/Bold)
+ */
+@theme {
+	--font-sans: 'Overpass', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Fira Sans', 'Overpass', ui-sans-serif, system-ui, sans-serif;
+	--font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+	--color-deep-blue: #07173f;
+	--color-electric-blue: #0042a6;
+	--color-neon-blue: #0960e1;
+	--color-blue-yonder: #2e96f5;
+	--color-neon-yellow: #eafe07;
+	--color-rocket-red: #e43700;
+	--color-martian-red: #8e1100;
+
+	/* Slate retuned to the Deep Blue / Electric Blue family; 300-500 keep >=4.5:1 on Deep Blue cards. */
+	--color-slate-50: #f5f8fd;
+	--color-slate-100: #e8eef8;
+	--color-slate-200: #d3dcee;
+	--color-slate-300: #b6c4e0;
+	--color-slate-400: #93a6cc;
+	--color-slate-500: #8094bf;
+	--color-slate-600: #4d6496;
+	--color-slate-700: #2a447e;
+	--color-slate-800: #16306a;
+	--color-slate-900: #0c2259;
+	--color-slate-950: #07173f;
+
+	/* Accent scale anchored on Blue Yonder / Neon Blue / Electric Blue. */
+	--color-yonder-50: #eef6ff;
+	--color-yonder-100: #d9ebfe;
+	--color-yonder-200: #b5d8fc;
+	--color-yonder-300: #82bdf9;
+	--color-yonder-400: #56a8f7;
+	--color-yonder-500: #2e96f5;
+	--color-yonder-600: #0960e1;
+	--color-yonder-700: #0042a6;
+	--color-yonder-800: #0a3584;
+	--color-yonder-900: #0b2a66;
+	--color-yonder-950: #081f52;
+}
+
+@layer base {
+	body {
+		/* Brand Guide p. 8: Linear gradient from top-left Electric Blue (#0042A6) to bottom-right Deep Blue (#07173F) at 45° (135deg in CSS). */
+		background: linear-gradient(135deg, #0042a6 0%, #032b73 52%, #07173f 100%) fixed;
+		background-color: #07173f;
+		color: #ffffff;
+		font-family: var(--font-sans);
+		line-height: 1.5;
+		overflow-x: hidden;
+		min-height: 100vh;
+	}
+
+	/* Brand Guide p. 13: H1 Headline — Fira Sans Black, All-Caps, 5% Letter Spacing, 120% line-height */
+	h1 {
+		font-family: var(--font-display);
+		font-weight: 900;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		line-height: 1.2;
+	}
+
+	/* Brand Guide p. 11 & 13: H2 Headline — Fira Sans Bold/Black or Overpass Regular, 120% line-height */
+	h2 {
+		font-family: var(--font-display);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		line-height: 1.2;
+	}
+
+	/* Brand Guide p. 13: H3 Subheading — Overpass SemiBold, All-Caps, 150% line-height */
+	h3 {
+		font-family: var(--font-sans);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		line-height: 1.5;
+	}
+
+	/* Neon Yellow (#EAFE07) marks interactive elements (Brand Guide p. 7 & 13). */
+	:focus-visible {
+		outline: 2px solid var(--color-neon-yellow);
+		outline-offset: 2px;
+	}
+
+	::selection {
+		background: var(--color-neon-yellow);
+		color: var(--color-deep-blue);
+	}
+}
+
+/* Telemetry & Pre-Formatted Typography (Brand Guide p. 11: Fira Code Regular / Bold) */
+.font-mono-telemetry {
+	font-family: var(--font-mono);
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.02em;
+}
+
+/* Brand Guide p. 14-16: Primary CTA Button (Neon Yellow background + Deep Blue Overpass Bold text, AAA 15.49:1) */
+.brand-btn-primary {
+	background-color: var(--color-neon-yellow);
+	color: var(--color-deep-blue);
+	font-family: var(--font-sans);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	transition:
+		background-color 150ms ease,
+		transform 150ms ease,
+		box-shadow 150ms ease;
+}
+
+.brand-btn-primary:hover {
+	background-color: #ffffff;
+	color: var(--color-deep-blue);
+}
+
+/* Brand Guide p. 15-16: Secondary Link (Overpass Bold, uppercase, Neon Yellow underline, Rocket Red hover) */
+.brand-link-secondary {
+	font-family: var(--font-sans);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #ffffff;
+	text-decoration: underline;
+	text-decoration-color: var(--color-neon-yellow);
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+	transition:
+		color 150ms ease,
+		text-decoration-color 150ms ease;
+}
+
+.brand-link-secondary:hover {
+	color: var(--color-rocket-red);
+	text-decoration-color: var(--color-rocket-red);
+}
+
+/* Brand Guide p. 19: Official NASA Space Apps background patterns screened back to ~25% opacity over brand blue */
+.brand-pattern-orbits,
+.brand-pattern-fiduciaries,
+.brand-pattern-voronoi,
+.brand-pattern-waves,
+.brand-pattern-rosette {
+	position: relative;
+	isolation: isolate;
+}
+
+.brand-pattern-orbits::before,
+.brand-pattern-fiduciaries::before,
+.brand-pattern-voronoi::before,
+.brand-pattern-waves::before,
+.brand-pattern-rosette::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: -1;
+	opacity: 0.24;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+.brand-pattern-orbits::before {
+	background-image: url('/brand/patterns/orbits.svg');
+}
+
+.brand-pattern-fiduciaries::before {
+	background-image: url('/brand/patterns/fiduciaries.svg');
+	background-size: 640px 640px;
+	background-repeat: repeat;
+}
+
+.brand-pattern-voronoi::before {
+	background-image: url('/brand/patterns/voronoi.svg');
+}
+
+.brand-pattern-waves::before {
+	background-image: url('/brand/patterns/waves.svg');
+}
+
+.brand-pattern-rosette::before {
+	background-image: url('/brand/patterns/rosette.svg');
+}
+
+/* MapLibre custom dark theme styling anchored on Deep Blue (#07173F) */
+.maplibregl-ctrl-group {
+	background: #07173f !important;
+	border: 1px solid #16306a !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+	border-radius: 6px !important;
+}
+
+.maplibregl-ctrl-group button {
+	border-bottom: 1px solid #16306a !important;
+}
+
+.maplibregl-ctrl-group button:last-child {
+	border-bottom: none !important;
+}
+
+.maplibregl-ctrl-icon {
+	filter: invert(0.9) hue-rotate(180deg);
+}
+
+.maplibregl-popup-content {
+	background: #07173f !important;
+	color: #ffffff !important;
+	border: 1px solid #2a447e !important;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8) !important;
+	border-radius: 6px !important;
+	padding: 12px 14px !important;
+}
+
+.maplibregl-popup-tip {
+	border-top-color: #07173f !important;
+	border-bottom-color: #07173f !important;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+::-webkit-scrollbar-track {
+	background: #07173f;
+}
+::-webkit-scrollbar-thumb {
+	background: #16306a;
+	border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: #2e96f5;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	::before,
+	::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}

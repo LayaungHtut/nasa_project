@@ -1,0 +1,334 @@
+{
+  "event_id": "yangon-track40-frame10",
+  "method": "sentinel2_ndvi_on_radar_landcover_v1",
+  "source": "Copernicus Sentinel-2 L2A via Element 84 Earth Search (sentinel-2-l2a), modified Copernicus Sentinel data 2026",
+  "landcover": "ESA WorldCover 10 m 2021 v200 (tile N15E096), nearest-neighbour onto the radar grid",
+  "landcover_mask_erosion_px": 2,
+  "clear_scl_classes": [
+    4,
+    5,
+    6
+  ],
+  "min_cropland_clear_fraction": 0.5,
+  "scenes": [
+    {
+      "id": "S2A_46QHD_20260617_0_L2A",
+      "datetime": "2026-06-17T04:14:03.929000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2B_46QHD_20260620_0_L2A",
+      "datetime": "2026-06-20T04:13:46.314000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2C_46QHD_20260625_0_L2A",
+      "datetime": "2026-06-25T04:13:47.295000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2B_46QHD_20260630_0_L2A",
+      "datetime": "2026-06-30T04:13:45.433000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2C_46QHD_20260705_0_L2A",
+      "datetime": "2026-07-05T04:13:47.170000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2A_46QHD_20260707_1_L2A",
+      "datetime": "2026-07-07T04:14:02.009000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2B_46QHD_20260710_0_L2A",
+      "datetime": "2026-07-10T04:13:46.818000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2C_46QHD_20260715_0_L2A",
+      "datetime": "2026-07-15T04:13:48.933000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2A_46QHD_20260717_0_L2A",
+      "datetime": "2026-07-17T04:14:04.792000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.002
+    },
+    {
+      "id": "S2B_46QHD_20260720_0_L2A",
+      "datetime": "2026-07-20T04:13:48.291000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.111
+    },
+    {
+      "id": "S2C_46QHD_20260725_0_L2A",
+      "datetime": "2026-07-25T04:13:49.582000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.001
+    },
+    {
+      "id": "S2B_46QHD_20260730_0_L2A",
+      "datetime": "2026-07-30T04:13:48.430000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2C_46QHD_20260804_0_L2A",
+      "datetime": "2026-08-04T04:13:48.726000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2A_46QHD_20260806_0_L2A",
+      "datetime": "2026-08-06T04:14:05.182000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.51,
+      "cropland_ndvi_median": 0.605,
+      "cropland_ndvi_p25_p75": [
+        0.441,
+        0.71
+      ],
+      "cropland_water_fraction": 0.018,
+      "forest_ndvi_median": 0.787,
+      "assets": {
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/8/S2A_46QHD_20260806_0_L2A/SCL.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/8/S2A_46QHD_20260806_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/8/S2A_46QHD_20260806_0_L2A/B08.tif"
+      }
+    },
+    {
+      "id": "S2B_46QHD_20260809_0_L2A",
+      "datetime": "2026-08-09T04:13:46.957000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2C_46QHD_20260814_0_L2A",
+      "datetime": "2026-08-14T04:13:46.592000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.409
+    },
+    {
+      "id": "S2B_46QHD_20260819_0_L2A",
+      "datetime": "2026-08-19T04:13:44.462000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2C_46QHD_20260824_0_L2A",
+      "datetime": "2026-08-24T04:13:45.189000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.136
+    },
+    {
+      "id": "S2A_46QHD_20260826_0_L2A",
+      "datetime": "2026-08-26T04:14:02.866000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2B_46QHD_20260829_0_L2A",
+      "datetime": "2026-08-29T04:13:45.051000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.001
+    },
+    {
+      "id": "S2C_46QHD_20260903_0_L2A",
+      "datetime": "2026-09-03T04:13:45.749000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.025
+    },
+    {
+      "id": "S2B_46QHD_20260908_0_L2A",
+      "datetime": "2026-09-08T04:13:45.050000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.135
+    },
+    {
+      "id": "S2C_46QHD_20260913_0_L2A",
+      "datetime": "2026-09-13T04:13:46.170000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.913,
+      "cropland_ndvi_median": 0.714,
+      "cropland_ndvi_p25_p75": [
+        0.574,
+        0.803
+      ],
+      "cropland_water_fraction": 0.035,
+      "forest_ndvi_median": 0.895,
+      "assets": {
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/9/S2C_46QHD_20260913_0_L2A/SCL.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/9/S2C_46QHD_20260913_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/9/S2C_46QHD_20260913_0_L2A/B08.tif"
+      }
+    },
+    {
+      "id": "S2A_46QHD_20260915_0_L2A",
+      "datetime": "2026-09-15T04:14:01.351000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2B_46QHD_20260918_0_L2A",
+      "datetime": "2026-09-18T04:13:46.468000Z",
+      "processing_baseline": "05.12",
+      "cropland_clear_fraction": 0.33
+    },
+    {
+      "id": "S2C_46QHD_20260923_0_L2A",
+      "datetime": "2026-09-23T04:13:48.335000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2B_46QHD_20260928_0_L2A",
+      "datetime": "2026-09-28T04:13:47.561000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2C_46QHD_20261003_0_L2A",
+      "datetime": "2026-10-03T04:13:49.378000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.883,
+      "cropland_ndvi_median": 0.644,
+      "cropland_ndvi_p25_p75": [
+        0.498,
+        0.735
+      ],
+      "cropland_water_fraction": 0.011,
+      "forest_ndvi_median": 0.846,
+      "assets": {
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2C_46QHD_20261003_0_L2A/SCL.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2C_46QHD_20261003_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2C_46QHD_20261003_0_L2A/B08.tif"
+      }
+    },
+    {
+      "id": "S2A_46QHD_20261005_0_L2A",
+      "datetime": "2026-10-05T04:14:00.907000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.388
+    },
+    {
+      "id": "S2B_46QHD_20261008_1_L2A",
+      "datetime": "2026-10-08T04:13:44.715000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.515,
+      "cropland_ndvi_median": 0.639,
+      "cropland_ndvi_p25_p75": [
+        0.487,
+        0.732
+      ],
+      "cropland_water_fraction": 0.009,
+      "forest_ndvi_median": 0.827,
+      "assets": {
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2B_46QHD_20261008_1_L2A/SCL.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2B_46QHD_20261008_1_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2B_46QHD_20261008_1_L2A/B08.tif"
+      }
+    },
+    {
+      "id": "S2C_46QHD_20261013_0_L2A",
+      "datetime": "2026-10-13T04:13:49.249000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.858,
+      "cropland_ndvi_median": 0.66,
+      "cropland_ndvi_p25_p75": [
+        0.506,
+        0.756
+      ],
+      "cropland_water_fraction": 0.007,
+      "forest_ndvi_median": 0.865,
+      "assets": {
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2C_46QHD_20261013_0_L2A/SCL.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2C_46QHD_20261013_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2C_46QHD_20261013_0_L2A/B08.tif"
+      }
+    },
+    {
+      "id": "S2B_46QHD_20261018_0_L2A",
+      "datetime": "2026-10-18T04:13:47.042000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.0
+    },
+    {
+      "id": "S2C_46QHD_20261023_0_L2A",
+      "datetime": "2026-10-23T04:13:47.493000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.857,
+      "cropland_ndvi_median": 0.664,
+      "cropland_ndvi_p25_p75": [
+        0.533,
+        0.751
+      ],
+      "cropland_water_fraction": 0.004,
+      "forest_ndvi_median": 0.83,
+      "assets": {
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2C_46QHD_20261023_0_L2A/SCL.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2C_46QHD_20261023_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2C_46QHD_20261023_0_L2A/B08.tif"
+      }
+    },
+    {
+      "id": "S2A_46QHD_20261025_0_L2A",
+      "datetime": "2026-10-25T04:13:55.428000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.475
+    },
+    {
+      "id": "S2B_46QHD_20261028_0_L2A",
+      "datetime": "2026-10-28T04:13:48.491000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.942,
+      "cropland_ndvi_median": 0.672,
+      "cropland_ndvi_p25_p75": [
+        0.535,
+        0.76
+      ],
+      "cropland_water_fraction": 0.005,
+      "forest_ndvi_median": 0.851,
+      "assets": {
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2B_46QHD_20261028_0_L2A/SCL.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2B_46QHD_20261028_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/10/S2B_46QHD_20261028_0_L2A/B08.tif"
+      }
+    },
+    {
+      "id": "S2C_46QHD_20261102_0_L2A",
+      "datetime": "2026-11-02T04:13:44.338000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.907,
+      "cropland_ndvi_median": 0.666,
+      "cropland_ndvi_p25_p75": [
+        0.522,
+        0.758
+      ],
+      "cropland_water_fraction": 0.003,
+      "forest_ndvi_median": 0.848,
+      "assets": {
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/11/S2C_46QHD_20261102_0_L2A/SCL.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/11/S2C_46QHD_20261102_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/11/S2C_46QHD_20261102_0_L2A/B08.tif"
+      }
+    },
+    {
+      "id": "S2B_46QHD_20261107_0_L2A",
+      "datetime": "2026-11-07T04:13:48.569000Z",
+      "processing_baseline": "05.13",
+      "cropland_clear_fraction": 0.0
+    }
+  ],
+  "generated_at": "2026-11-12T19:26:30.708568+00:00"
+}

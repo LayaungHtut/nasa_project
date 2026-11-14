@@ -1,0 +1,164 @@
+{
+	"generated_at": "2026-10-30T16:12:42.648137+00:00",
+	"event_id": "yangon-track40-frame10",
+	"candidate_mask_sha256": "d4bc559aedfdcfbc83dc075860f2ea47c5bce907345a7ab1039110c6fed3cd39",
+	"candidate_geometry_sha256": "6cd7a8e8a1614449f7b21d16ecde9858111404124a5a4c133aafa6595d0cddc5",
+	"nisar_dates": {
+		"baseline": "2026-08-27T23:02:39Z",
+		"post_event": "2026-09-08T23:02:39Z"
+	},
+	"target_crs": "EPSG:32647",
+	"target_transform": [10.0, 0.0, 183020.0, 0.0, -10.0, 1895280.0],
+	"target_shape": [1400, 1400],
+	"primary_window_days": 3,
+	"exploratory_window_days": 7,
+	"selection_rule": "Rank by usable candidate coverage, then absolute time offset; never by agreement with NISAR.",
+	"quality_rule": "SCL 4/5/6 only; exclude one native pixel (20 m, four-connected neighbors) around every other class. Nearest-neighbor reprojection.",
+	"scenes": [
+		{
+			"id": "S2C_46QHD_20260824_0_L2A",
+			"datetime": "2026-08-24T04:13:45.189000Z",
+			"scene_cloud_percent": 66.836977,
+			"baseline_offset_days": -3.7839561458333333,
+			"repeat_offset_days": -15.783956145833333,
+			"aoi_covered_fraction": 1.0,
+			"aoi_clear_fraction_buffered": 0.15171785714285715,
+			"candidate_pixels": 556,
+			"candidate_clear_pixels_buffered": 110,
+			"candidate_scl_counts_unbuffered": {
+				"vegetation": 69,
+				"not_vegetated": 49,
+				"water": 1,
+				"unclassified": 84,
+				"medium_cloud": 209,
+				"high_cloud": 122,
+				"cirrus": 22
+			},
+			"scl_asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/8/S2C_46QHD_20260824_0_L2A/SCL.tif",
+			"crop_sha256": "b3e58cbf4d08e1a46fc16e90365378841049331074d1a2be17d70231cc598721",
+			"crop": "data/validation/yangon-track40-frame10/crops/S2C_46QHD_20260824_0_L2A_scl.tif"
+		},
+		{
+			"id": "S2A_46QHD_20260826_0_L2A",
+			"datetime": "2026-08-26T04:14:02.866000Z",
+			"scene_cloud_percent": 96.074933,
+			"baseline_offset_days": -1.7837515509259259,
+			"repeat_offset_days": -13.783751550925928,
+			"aoi_covered_fraction": 1.0,
+			"aoi_clear_fraction_buffered": 0.0,
+			"candidate_pixels": 556,
+			"candidate_clear_pixels_buffered": 0,
+			"candidate_scl_counts_unbuffered": {
+				"high_cloud": 556
+			},
+			"scl_asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/8/S2A_46QHD_20260826_0_L2A/SCL.tif",
+			"crop_sha256": "79c1a74e9a89e78349a16cad8b0c56a7608734b437358fa2f5606af4261b2088",
+			"crop": "data/validation/yangon-track40-frame10/crops/S2A_46QHD_20260826_0_L2A_scl.tif"
+		},
+		{
+			"id": "S2B_46QHD_20260829_0_L2A",
+			"datetime": "2026-08-29T04:13:45.051000Z",
+			"scene_cloud_percent": 98.669642,
+			"baseline_offset_days": 1.2160422569444445,
+			"repeat_offset_days": -10.783957743055556,
+			"aoi_covered_fraction": 1.0,
+			"aoi_clear_fraction_buffered": 0.0008795918367346939,
+			"candidate_pixels": 556,
+			"candidate_clear_pixels_buffered": 0,
+			"candidate_scl_counts_unbuffered": {
+				"cloud_shadow": 21,
+				"medium_cloud": 148,
+				"high_cloud": 387
+			},
+			"scl_asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/8/S2B_46QHD_20260829_0_L2A/SCL.tif",
+			"crop_sha256": "716c120e8e027bc0c08fab1888983ff882b6e07647b8faa01cba7796c413db87",
+			"crop": "data/validation/yangon-track40-frame10/crops/S2B_46QHD_20260829_0_L2A_scl.tif"
+		},
+		{
+			"id": "S2C_46QHD_20260903_0_L2A",
+			"datetime": "2026-09-03T04:13:45.749000Z",
+			"scene_cloud_percent": 96.941549,
+			"baseline_offset_days": 6.216050335648148,
+			"repeat_offset_days": -5.7839496643518515,
+			"aoi_covered_fraction": 1.0,
+			"aoi_clear_fraction_buffered": 0.01991530612244898,
+			"candidate_pixels": 556,
+			"candidate_clear_pixels_buffered": 58,
+			"candidate_scl_counts_unbuffered": {
+				"cloud_shadow": 280,
+				"vegetation": 68,
+				"unclassified": 54,
+				"medium_cloud": 116,
+				"high_cloud": 26,
+				"cirrus": 12
+			},
+			"scl_asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/9/S2C_46QHD_20260903_0_L2A/SCL.tif",
+			"crop_sha256": "361b7875823457bc2acea6bc4a2b531ea9e6c8be627cb6a092e1822673105a94",
+			"crop": "data/validation/yangon-track40-frame10/crops/S2C_46QHD_20260903_0_L2A_scl.tif"
+		},
+		{
+			"id": "S2B_46QHD_20260908_0_L2A",
+			"datetime": "2026-09-08T04:13:45.050000Z",
+			"scene_cloud_percent": 86.864853,
+			"baseline_offset_days": 11.216042245370371,
+			"repeat_offset_days": -0.7839577546296296,
+			"aoi_covered_fraction": 1.0,
+			"aoi_clear_fraction_buffered": 0.1477637755102041,
+			"candidate_pixels": 556,
+			"candidate_clear_pixels_buffered": 82,
+			"candidate_scl_counts_unbuffered": {
+				"cloud_shadow": 11,
+				"vegetation": 28,
+				"not_vegetated": 64,
+				"unclassified": 175,
+				"medium_cloud": 249,
+				"high_cloud": 29
+			},
+			"scl_asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/9/S2B_46QHD_20260908_0_L2A/SCL.tif",
+			"crop_sha256": "20bcffd84509c730ae9535cdffe8566a69c569a5e023a2d1411b11946ae8ec7e",
+			"crop": "data/validation/yangon-track40-frame10/crops/S2B_46QHD_20260908_0_L2A_scl.tif"
+		},
+		{
+			"id": "S2C_46QHD_20260913_0_L2A",
+			"datetime": "2026-09-13T04:13:46.170000Z",
+			"scene_cloud_percent": 6.441953,
+			"baseline_offset_days": 16.216055208333334,
+			"repeat_offset_days": 4.216055208333334,
+			"aoi_covered_fraction": 1.0,
+			"aoi_clear_fraction_buffered": 0.9295811224489796,
+			"candidate_pixels": 556,
+			"candidate_clear_pixels_buffered": 360,
+			"candidate_scl_counts_unbuffered": {
+				"vegetation": 302,
+				"not_vegetated": 45,
+				"water": 72,
+				"unclassified": 137
+			},
+			"scl_asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/9/S2C_46QHD_20260913_0_L2A/SCL.tif",
+			"crop_sha256": "9514ddcbde9fc767e73505df1dfad8f234009971032410627cf23b9f3e96ec28",
+			"crop": "data/validation/yangon-track40-frame10/crops/S2C_46QHD_20260913_0_L2A_scl.tif"
+		},
+		{
+			"id": "S2A_46QHD_20260915_0_L2A",
+			"datetime": "2026-09-15T04:14:01.351000Z",
+			"scene_cloud_percent": 99.920535,
+			"baseline_offset_days": 18.21623091435185,
+			"repeat_offset_days": 6.216230914351852,
+			"aoi_covered_fraction": 1.0,
+			"aoi_clear_fraction_buffered": 0.0,
+			"candidate_pixels": 556,
+			"candidate_clear_pixels_buffered": 0,
+			"candidate_scl_counts_unbuffered": {
+				"high_cloud": 556
+			},
+			"scl_asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/9/S2A_46QHD_20260915_0_L2A/SCL.tif",
+			"crop_sha256": "bbb22dff3178e3e0de65b02365108d12e0261b4059ca5a68076473449e64c1aa",
+			"crop": "data/validation/yangon-track40-frame10/crops/S2A_46QHD_20260915_0_L2A_scl.tif"
+		}
+	],
+	"limitations": [
+		"SCL is an independent algorithmic reference, not field ground truth.",
+		"20 m SCL resampled to a 10 m grid does not create independent 10 m reference information.",
+		"A temporally displaced optical observation cannot confirm the exact timing of change."
+	]
+}

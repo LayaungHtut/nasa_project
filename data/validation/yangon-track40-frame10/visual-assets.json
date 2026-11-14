@@ -1,0 +1,20 @@
+[
+	{
+		"id": "S2C_46QHD_20260824_0_L2A",
+		"asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/8/S2C_46QHD_20260824_0_L2A/TCI.tif",
+		"crop": "data/validation/yangon-track40-frame10/crops/S2C_46QHD_20260824_0_L2A_visual.tif",
+		"sha256": "ff1429d1593bdc8684b3161288732dc2d782f82e2c9fe74bd75e2540eedbab40"
+	},
+	{
+		"id": "S2B_46QHD_20260908_0_L2A",
+		"asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/9/S2B_46QHD_20260908_0_L2A/TCI.tif",
+		"crop": "data/validation/yangon-track40-frame10/crops/S2B_46QHD_20260908_0_L2A_visual.tif",
+		"sha256": "62a2236669be4f6d261bbf83a2be1948141d30d86fd964dfbe7ce9b283d5cc07"
+	},
+	{
+		"id": "S2C_46QHD_20260913_0_L2A",
+		"asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/46/Q/HD/2026/9/S2C_46QHD_20260913_0_L2A/TCI.tif",
+		"crop": "data/validation/yangon-track40-frame10/crops/S2C_46QHD_20260913_0_L2A_visual.tif",
+		"sha256": "d24c9aa477e2db84de4f77aee98afe7ed3ca8cdc59947144a0b8c45a3f91ae8b"
+	}
+]

@@ -1,0 +1,61 @@
+{
+	"generated": "2026-09-18",
+	"search_method": "asf_search v14.0.0, platform=NISAR, processingLevel=GCOV, intersectsWith=Myanmar bbox POLYGON((92.0 9.5,101.5 9.5,101.5 28.6,92.0 28.6,92.0 9.5))",
+	"search_result_count": 250,
+	"note": "This is a real, verified query result against ASF's public search API (no authentication required for metadata search). All granule IDs, dates, orbits, and geometries below are real. Pixel-level download requires Earthdata Login (EDL) credentials, which this session does not have -- see docs/research/nisar-research.md 'Outstanding verification tasks' and the blocker note in docs/demo/data-provenance.md.",
+	"candidates": [
+		{
+			"candidate_id": "yangon-track40-frame10",
+			"rank": 1,
+			"reason_selected": "Repeat-pass pair (12-day NISAR cycle), same track/frame/polarization (dual-pol HH+HV), footprint fully contains Yangon, both acquisitions fall inside Myanmar's Aug-Sep monsoon season -- plausible window for a real water-extent change signal.",
+			"aoi_name": "Yangon Region, Myanmar",
+			"track_frame": { "pathNumber": 40, "frameNumber": 10, "flightDirection": "ASCENDING" },
+			"baseline": {
+				"fileID": "NISAR_L2_PR_GCOV_029_040_A_010_4005_DHDH_A_20260827T230239_20260827T230313_P05023_N_F_J_001",
+				"acquisition_start": "2026-08-27T23:02:39Z",
+				"acquisition_stop": "2026-08-27T23:03:13Z",
+				"orbit": 5675,
+				"bbox_wgs84": [95.34371, 15.49694, 98.24473, 18.14262],
+				"polarizations": { "main": ["HH", "HV"], "side": ["HH", "HV"] },
+				"bytes_h5": 5955911680,
+				"collectionName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+				"conceptID": "C2854338529-ASF",
+				"url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_029_040_A_010_4005_DHDH_A_20260827T230239_20260827T230313_P05023_N_F_J_001/NISAR_L2_PR_GCOV_029_040_A_010_4005_DHDH_A_20260827T230239_20260827T230313_P05023_N_F_J_001.h5"
+			},
+			"post_event": {
+				"fileID": "NISAR_L2_PR_GCOV_030_040_A_010_4005_DHDH_A_20260908T230239_20260908T230313_P05023_N_F_J_001",
+				"acquisition_start": "2026-09-08T23:02:39Z",
+				"acquisition_stop": "2026-09-08T23:03:13Z",
+				"bbox_wgs84": [95.341, 15.50726, 98.24294, 18.15337],
+				"polarizations": { "main": ["HH", "HV"], "side": ["HH", "HV"] },
+				"bytes_h5": 5968494592,
+				"collectionName": "NISAR_L2_GCOV_PROVISIONAL_V1",
+				"url": "https://nisar.asf.earthdatacloud.nasa.gov/NISAR/NISAR_L2_GCOV_PROVISIONAL_V1/NISAR_L2_PR_GCOV_030_040_A_010_4005_DHDH_A_20260908T230239_20260908T230313_P05023_N_F_J_001/NISAR_L2_PR_GCOV_030_040_A_010_4005_DHDH_A_20260908T230239_20260908T230313_P05023_N_F_J_001.h5"
+			},
+			"temporal_separation_days": 12,
+			"download_status": "BLOCKED_NEEDS_EDL_CREDENTIALS",
+			"download_blocker": "curl to both the full .h5 and the small QA_STATS.h5 for this granule returned HTTP 303 -> presigned CloudFront URL -> body 'HTTP Basic: Access denied.' Confirmed 2026-09-18. NASA Earthdata Login (EDL) authentication is required even for the small QA sidecar files, not just the 6GB main product."
+		},
+		{
+			"candidate_id": "yangon-track134-frame80",
+			"rank": 2,
+			"reason_selected": "Second independent repeat-pass pair over the same Yangon AOI, different track geometry -- kept as a backup in case track 40's pair has a data or coherence issue once actually opened.",
+			"aoi_name": "Yangon Region, Myanmar",
+			"track_frame": { "pathNumber": 134, "frameNumber": 80, "flightDirection": "DESCENDING" },
+			"baseline": {
+				"fileID": "NISAR_L2_PR_GCOV_029_134_D_080_2005_DHDH_M_20260903T121136_20260903T121211_P05023_N_F_J_001",
+				"acquisition_start": "2026-09-03T12:11:36Z",
+				"bbox_wgs84": [93.88933, 15.52459, 96.74204, 18.21531]
+			},
+			"post_event": {
+				"fileID": "NISAR_L2_PR_GCOV_030_134_D_080_2005_SHSH_M_20260915T121136_20260915T121211_P05023_N_F_J_001",
+				"acquisition_start": "2026-09-15T12:11:36Z",
+				"bbox_wgs84": [93.91849, 15.51738, 96.74029, 18.20084]
+			},
+			"temporal_separation_days": 12,
+			"download_status": "BLOCKED_NEEDS_EDL_CREDENTIALS",
+			"download_blocker": "Same as above -- not individually re-tested, same auth wall applies to the whole ASF Earthdata Cloud collection."
+		}
+	],
+	"other_myanmar_repeat_pairs_found": "60+ additional track/frame combinations with >=2 acquisitions were found in the same search over the full Myanmar bbox (dates ranging 2026-08-27 to 2026-09-15); full list in scripts/search_nisar_myanmar.py output. Only the two above were checked for actually containing the Yangon point (16.8N, 96.15E)."
+}

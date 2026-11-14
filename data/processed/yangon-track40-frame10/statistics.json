@@ -1,0 +1,21 @@
+{
+	"total_pixels": 1960000,
+	"aoi_area_km2": 196.0,
+	"pixel_area_m2": 100.0,
+	"baseline_water_pixels": 58564,
+	"baseline_water_area_km2": 5.856,
+	"post_event_water_pixels": 5712,
+	"post_event_water_area_km2": 0.571,
+	"new_inundation_pixels": 556,
+	"new_inundation_area_km2": 0.056,
+	"water_loss_pixels": 45172,
+	"water_loss_area_km2": 4.517,
+	"note": "baseline_water_pixels vs post_event_water_pixels shows a large raw asymmetry (see real-data-validation.md) -- likely surface-roughness/acquisition-geometry sensitivity of this threshold-based method, not necessarily true water-level change. Disclosed here rather than only reporting the smaller new_inundation figure.",
+	"valid_pixels": 1960000,
+	"valid_fraction": 1.0,
+	"threshold_db": -9.54,
+	"min_cluster_pixels": 8,
+	"lee_filter_size": 3,
+	"detection_score": 0.639,
+	"detection_score_formula": "0.5 * valid_fraction + 0.5 * min(1, new_inundation_pixels / 2000)"
+}
