@@ -1,4 +1,4 @@
-import { SCENARIOS } from '$lib/data/scenarios';
+import { SCENARIOS, findPatch } from '$lib/data/scenarios';
 import { TOUR_STEPS } from '$lib/data/tour';
 
 /** Map view: one pass, a before/after swipe, or one of the two InSAR layers. */
@@ -17,12 +17,26 @@ class AppState {
 	/** Judge tour step, 1-based; 0 when the tour is off. */
 	demoStep = $state(0);
 	isDemoModeActive = $derived(this.demoStep > 0);
+	/** Detected Hpakant patch picked on the map or in the panel; only shown on the pass it was found on. */
+	selectedPatchId = $state<string | null>(null);
+	selectedPatch = $derived.by(() => {
+		const p = findPatch(this.scenario, this.selectedPatchId);
+		return p && p.epoch === this.epochIndex ? p : null;
+	});
+	/** Bumped on each pick, so the map zooms to a patch only when one is picked (not on every pass change). */
+	patchFocus = $state(0);
+
+	selectPatch(id: string | null, zoom = true) {
+		this.selectedPatchId = id;
+		if (id && zoom) this.patchFocus++;
+	}
 
 	selectScenario(id: string) {
 		const s = SCENARIOS.find((x) => x.id === id);
 		if (!s) return;
 		this.scenarioId = id;
 		this.epochIndex = s.epochs.length - 1;
+		this.selectedPatchId = null;
 	}
 
 	/** Moves the tour to step n and sets the map to show it; any n outside the tour ends it. */
@@ -39,6 +53,7 @@ class AppState {
 		this.epochIndex = step.epochIndex;
 		this.layer = step.layer;
 		this.sliderPosition = 50;
+		this.selectedPatchId = null;
 	}
 }
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import {
 		Map as MapLibreMap,
 		NavigationControl,
@@ -10,11 +10,12 @@
 		type StyleSpecification,
 		type ImageSource,
 		type GeoJSONSource,
-		type ExpressionSpecification
+		type ExpressionSpecification,
+		type MapMouseEvent
 	} from 'maplibre-gl';
 	import mapWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 	import { appState, type ScenarioLayer } from '$lib/stores/appState.svelte';
-	import { shortDate } from '$lib/data/scenarios';
+	import { findPatch, ha, patchLabel, shortDate } from '$lib/data/scenarios';
 	import ComparisonSlider from './ComparisonSlider.svelte';
 	import ScenarioLegend from './ScenarioLegend.svelte';
 	import { Layers, SplitSquareHorizontal, Waves, Activity, AlertCircle } from 'lucide-svelte';
@@ -24,6 +25,13 @@
 	let map = $state<MapLibreMap | null>(null);
 	let comparisonMap = $state<MapLibreMap | null>(null);
 	let basemapUnavailable = $state(false);
+	/** Detected patch under the pointer (real Hpakant data only), for the hover label. */
+	let hover = $state<{ id: string; x: number; y: number } | null>(null);
+	// Only patches of the pass on screen; a label left over from another pass or module is dropped.
+	let hoverPatch = $derived.by(() => {
+		const p = hover ? findPatch(appState.scenario, hover.id) : null;
+		return p && p.epoch === appState.epochIndex ? p : null;
+	});
 
 	let scenario = $derived(appState.scenario);
 	let epoch = $derived(scenario.epochs[appState.epochIndex]);
@@ -94,6 +102,21 @@
 			filter: baseFilter('overlay-outline'),
 			paint: { 'line-color': KIND_COLOR as never, 'line-width': 1.5 }
 		});
+		// Hover and selection rings for inspectable (real-data) patches; white so they read over both colours.
+		m.addLayer({
+			id: 'patch-hover',
+			type: 'line',
+			source: 'overlays',
+			filter: patchFilter(null),
+			paint: { 'line-color': '#ffffff', 'line-width': 1.5, 'line-opacity': 0.8 }
+		});
+		m.addLayer({
+			id: 'patch-selected',
+			type: 'line',
+			source: 'overlays',
+			filter: patchFilter(null),
+			paint: { 'line-color': '#ffffff', 'line-width': 3 }
+		});
 		m.addLayer({
 			id: 'overlay-rivers',
 			type: 'line',
@@ -135,6 +158,44 @@
 				'raster-fade-duration': 0
 			}
 		});
+	}
+
+	function patchFilter(id: string | null): ExpressionSpecification {
+		return ['==', ['get', 'patch_id'], id ?? ''];
+	}
+
+	/** Inspectable patches under a point, with a few pixels of slack so small patches can be tapped. */
+	function patchAt(e: MapMouseEvent): string | null {
+		if (!map) return null;
+		const { x, y } = e.point;
+		const hits = map.queryRenderedFeatures(
+			[
+				[x - 4, y - 4],
+				[x + 4, y + 4]
+			],
+			{ layers: ['overlay-fill'] }
+		);
+		const id = hits.find((f) => typeof f.properties?.patch_id === 'string')?.properties.patch_id;
+		return typeof id === 'string' ? id : null;
+	}
+
+	function onPatchHover(e: MapMouseEvent) {
+		const id = patchAt(e);
+		hover = id ? { id, x: e.point.x, y: e.point.y } : null;
+		if (map) map.getCanvas().style.cursor = id ? 'pointer' : '';
+	}
+
+	function clearHover() {
+		hover = null;
+		if (map) map.getCanvas().style.cursor = '';
+	}
+
+	/** Click a patch to inspect it; click elsewhere to clear the selection. */
+	function onMapClick(e: MapMouseEvent) {
+		if (compare || !appState.showOverlays) return;
+		const id = patchAt(e);
+		if (id) appState.selectPatch(id);
+		else if (appState.selectedPatchId) appState.selectPatch(null);
 	}
 
 	onMount(() => {
@@ -202,6 +263,9 @@
 			addOverlays(m);
 			addImage(c, 'sar');
 			addOverlays(c);
+			m.on('mousemove', 'overlay-fill', onPatchHover);
+			m.on('mouseleave', 'overlay-fill', clearHover);
+			m.on('click', onMapClick);
 			map = m;
 			comparisonMap = c;
 			void loadBasemap();
@@ -303,6 +367,39 @@
 			(map.getSource('insar') as ImageSource).updateImage({ url: insarUrl, coordinates });
 		map.setLayoutProperty('insar-layer', 'visibility', insarUrl ? 'visible' : 'none');
 	});
+
+	// Hover and selection rings.
+	$effect(() => {
+		const selected = appState.selectedPatch?.patch_id ?? null;
+		const hovered = hoverPatch?.patch_id ?? null;
+		for (const [m, show] of [
+			[map, appState.showOverlays && !compare],
+			[comparisonMap, appState.showOverlays]
+		] as const) {
+			if (!m) continue;
+			m.setFilter('patch-selected', patchFilter(selected));
+			m.setFilter('patch-hover', patchFilter(m === map && hovered !== selected ? hovered : null));
+			for (const id of ['patch-selected', 'patch-hover'])
+				m.setLayoutProperty(id, 'visibility', show ? 'visible' : 'none');
+		}
+	});
+
+	// Zoom to a patch when one is picked (map or panel), not when the pass changes.
+	$effect(() => {
+		void appState.patchFocus;
+		untrack(() => {
+			const p = appState.selectedPatch;
+			if (!map || !p) return;
+			const [w, s, e, n] = p.bbox;
+			map.fitBounds(
+				[
+					[w, s],
+					[e, n]
+				],
+				{ padding: 80, maxZoom: 15, duration: 900 }
+			);
+		});
+	});
 </script>
 
 <div class="absolute inset-0 overflow-hidden bg-deep-blue">
@@ -380,6 +477,20 @@
 				InSAR compares two passes. Pick a later pass on the timeline to see the
 				{appState.layer === 'coherence' ? 'coherence' : 'deformation'} between it and the pass before.
 			{/if}
+		</div>
+	{/if}
+
+	{#if hover && hoverPatch && !compare}
+		<div
+			class="pointer-events-none absolute z-30 rounded-md border border-yonder-400/60 bg-deep-blue/95 px-2 py-1 text-[11px] whitespace-nowrap text-white shadow-lg"
+			style:left={`${hover.x + 12}px`}
+			style:top={`${hover.y + 12}px`}
+			style:transform={hover.x > (mapContainer?.clientWidth ?? 0) - 260
+				? 'translateX(calc(-100% - 24px))'
+				: undefined}
+		>
+			<strong>{ha(hoverPatch.area_m2)}</strong>
+			<span class="text-slate-200">· {patchLabel(hoverPatch)} · click to inspect</span>
 		</div>
 	{/if}
 

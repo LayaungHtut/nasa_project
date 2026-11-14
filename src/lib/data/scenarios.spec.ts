@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { SCENARIOS, compliance, forensics, observedStatus } from './scenarios';
+import {
+	SCENARIOS,
+	compliance,
+	findPatch,
+	forensics,
+	observedPatches,
+	observedStatus,
+	patchLabel
+} from './scenarios';
 import type { LandslideScenario, MiningScenario, ObservedScenario } from '$lib/types/scenario';
 
 const mining = SCENARIOS.find((s) => s.module === 'mining') as MiningScenario;
@@ -7,6 +15,31 @@ const landslide = SCENARIOS.find((s) => s.module === 'landslide') as LandslideSc
 const observed = SCENARIOS.find((s) => s.module === 'observed') as ObservedScenario;
 
 describe('real Hpakant observations', () => {
+	it("lists each pass's patches once, and their areas add up to the pass totals", () => {
+		observed.metrics.forEach((m, i) => {
+			const patches = observedPatches(observed, i);
+			if (!m) return expect(patches).toEqual([]);
+			const sum = (kind: string) =>
+				patches.filter((p) => p.kind === kind).reduce((a, p) => a + p.area_m2, 0);
+			expect(sum('disturbed')).toBe(m.disturbed_m2);
+			expect(sum('new_water')).toBe(m.new_water_m2);
+			expect(new Set(patches.map((p) => p.patch_id)).size).toBe(patches.length);
+			expect(patches.every((p) => p.hv_db.length === observed.epochs.length)).toBe(true);
+		});
+	});
+
+	it('orders vegetation loss before water, largest first, and finds patches by id', () => {
+		const patches = observedPatches(observed, observed.epochs.length - 1);
+		const kinds = patches.map((p) => p.kind);
+		expect(kinds.indexOf('new_water')).toBeGreaterThan(kinds.lastIndexOf('disturbed'));
+		const loss = patches.filter((p) => p.kind === 'disturbed').map((p) => p.area_m2);
+		expect(loss).toEqual([...loss].sort((a, b) => b - a));
+		expect(findPatch(observed, patches[0].patch_id)).toEqual(patches[0]);
+		expect(patchLabel(patches[0])).toBe('Change patch 1');
+		expect(findPatch(observed, 'nope')).toBeNull();
+		expect(findPatch(mining, patches[0].patch_id)).toBeNull();
+	});
+
 	it('is labelled real and traces every pass to a NISAR granule', () => {
 		expect(observed.data_status).toBe('REAL');
 		for (const e of observed.epochs)

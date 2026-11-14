@@ -116,10 +116,53 @@ export interface ObservedMetrics {
 	clusters: number;
 }
 
+/** Properties of one detected Hpakant patch (a GeoJSON feature; a patch with a hole is still one feature). */
+export interface ObservedPatch {
+	kind: 'disturbed' | 'new_water';
+	/** Pass on which the patch was confirmed. */
+	epoch: number;
+	/** Unique across the scenario, e.g. "d6-1": kind initial, pass, rank by area on that pass. */
+	patch_id: string;
+	area_m2: number;
+	/** Patch median on every kept pass, after the per-pass reference offset. */
+	hv_db: number[];
+	hh_db: number[];
+	/** Patch median of the baseline composite in the channel the rule tests: HV for loss, HH for water. */
+	baseline_db: number;
+	/** Vegetation loss only. */
+	drop_db_median: number | null;
+	/** Median GUNW coherence over the patch for the pair ending on its pass. */
+	coherence: number | null;
+	/** Passes whose confirmed change of the same kind overlaps this patch. */
+	seen_on: number[];
+	centroid: Corner;
+	/** [west, south, east, north] */
+	bbox: [number, number, number, number];
+}
+
+export interface DbStats {
+	median: number;
+	p25: number;
+	p75: number;
+}
+
+/** HV on every kept pass: ground changed on the latest pass versus the stable vegetated reference. */
+export interface ObservedHvSeries {
+	polarization: 'HV';
+	reference: DbStats[];
+	reference_m2: number;
+	/** Null when nothing was confirmed on the latest pass. */
+	disturbed: DbStats[] | null;
+	disturbed_m2: number;
+	disturbed_epoch: number;
+	note: string;
+}
+
 export interface ObservedScenario extends ScenarioBase {
 	module: 'observed';
 	/** Null on the baseline passes and the first pass after them (nothing to confirm against yet). */
 	metrics: (ObservedMetrics | null)[];
+	hv_series: ObservedHvSeries;
 	thresholds: {
 		drop_db: number;
 		vegetated_below_reference_db: number;

@@ -2,7 +2,9 @@
 	import { appState } from '$lib/stores/appState.svelte';
 	import { ha, observedStatus, shortDate } from '$lib/data/scenarios';
 	import type { ObservedScenario } from '$lib/types/scenario';
-	import { Satellite, Info, Scale, ExternalLink } from 'lucide-svelte';
+	import { Satellite, Info, Scale, ExternalLink, ChartLine } from 'lucide-svelte';
+	import HvChart from './HvChart.svelte';
+	import PatchInspector from './PatchInspector.svelte';
 
 	let { scenario }: { scenario: ObservedScenario } = $props();
 	let i = $derived(appState.epochIndex);
@@ -20,6 +22,24 @@
 		awaiting: 'Awaiting a second pass',
 		baseline: 'Baseline pass'
 	};
+	let hv = $derived(scenario.hv_series);
+	/** First pass after the baseline whose changed-ground median sits at least the rule's drop below the baseline, if it stays there. */
+	let dropPass = $derived.by(() => {
+		const d = hv.disturbed;
+		if (!d) return -1;
+		const base = (d[0].median + d[1].median) / 2;
+		const low = d.map((s) => s.median <= base - t.drop_db);
+		const k = low.findIndex((x, j) => j >= 2 && x);
+		return k >= 2 && low.slice(k).every(Boolean) ? k : -1;
+	});
+	let hvIntro = $derived.by(() => {
+		const d = (k: number) => shortDate(scenario.epochs[k].date);
+		const km2 = (hv.reference_m2 / 1e6).toFixed(0);
+		const intro = `The ${ha(hv.disturbed_m2)} confirmed as changed on ${d(hv.disturbed_epoch)}, followed back through all ${scenario.epochs.length} passes, against ${km2} km² of stable vegetated reference ground.`;
+		return dropPass > 0
+			? `${intro} Its HV fell between ${d(dropPass - 1)} and ${d(dropPass)} and has stayed low since.`
+			: intro;
+	});
 	const pct = (r: number) => `${(r * 100).toFixed(r < 0.01 ? 2 : 1)}%`;
 </script>
 
@@ -88,6 +108,32 @@
 			</li>
 		</ul>
 	{/if}
+</section>
+
+<PatchInspector {scenario} />
+
+<section
+	class="rounded-lg border border-yonder-500/40 bg-deep-blue/95 p-3.5 text-[11px] leading-relaxed text-slate-200 shadow-lg"
+	aria-labelledby="hv-heading"
+>
+	<h3
+		id="hv-heading"
+		class="flex items-center gap-2 text-[11px] font-bold tracking-wider text-white uppercase"
+	>
+		<ChartLine class="h-4 w-4 text-neon-yellow" />
+		<span>HV backscatter, pass by pass</span>
+	</h3>
+	<p class="mt-1 text-slate-300">{hvIntro}</p>
+	<div class="mt-2">
+		<HvChart
+			series={hv}
+			epochs={scenario.epochs}
+			selected={appState.selectedPatch}
+			current={i}
+			onpick={(k) => (appState.epochIndex = k)}
+		/>
+	</div>
+	<p class="mt-1.5 text-[10px] text-slate-400">{hv.note}</p>
 </section>
 
 <section

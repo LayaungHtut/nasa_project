@@ -1,6 +1,7 @@
 import type {
 	LandslideScenario,
 	MiningScenario,
+	ObservedPatch,
 	ObservedScenario,
 	Scenario
 } from '$lib/types/scenario';
@@ -33,6 +34,31 @@ export function observedStatus(s: ObservedScenario, i: number): ObservedStatus {
 		i < 2 ? 'baseline' : m === null ? 'awaiting' : beyond(m) ? 'change' : 'within_noise';
 	return { stage, firstChange };
 }
+
+/** Detected patches confirmed on pass i (one entry per patch), vegetation loss first, largest first. */
+export function observedPatches(s: ObservedScenario, i: number): ObservedPatch[] {
+	const seen = new Map<string, ObservedPatch>();
+	for (const f of s.geojson.features) {
+		const p = f.properties as ObservedPatch | null;
+		if (p?.patch_id && p.epoch === i && !seen.has(p.patch_id)) seen.set(p.patch_id, p);
+	}
+	const order = { disturbed: 0, new_water: 1 };
+	return [...seen.values()].sort((a, b) => order[a.kind] - order[b.kind] || b.area_m2 - a.area_m2);
+}
+
+/** The patch with this id, or null (also null for the simulated modules, which have no patch ids). */
+export function findPatch(s: Scenario, id: string | null): ObservedPatch | null {
+	if (!id || s.module !== 'observed') return null;
+	for (const f of s.geojson.features) {
+		const p = f.properties as ObservedPatch | null;
+		if (p?.patch_id === id) return p;
+	}
+	return null;
+}
+
+/** Short reader-facing name, e.g. "Change patch 1" or "New water 2". */
+export const patchLabel = (p: ObservedPatch) =>
+	`${p.kind === 'disturbed' ? 'Change patch' : 'New water'} ${p.patch_id.split('-')[1]}`;
 
 export type ComplianceLevel = 'compliant' | 'watch' | 'breach';
 

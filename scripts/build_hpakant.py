@@ -24,6 +24,10 @@ Steps, each recorded in the output so the app can show it:
    little real change is expected, gives a false-alarm rate. GUNW coherence
    over the changed ground versus the reference is reported as supporting
    evidence, not as proof.
+5. For inspection in the app: each detected patch carries its area, median drop,
+   coherence, baseline level and its median HV/HH on every kept pass, and
+   hv_series follows the ground changed on the latest pass back through every
+   pass next to the stable reference.
 
 The result is "surface change consistent with excavation or clearing". It is
 not proof of mining and says nothing about legality: no verified permit
@@ -100,6 +104,56 @@ def confirmed(flags: list[np.ndarray], k: int) -> np.ndarray:
 
 def area(mask: np.ndarray, px_m2: float) -> int:
     return int(round(mask.sum() * px_m2))
+
+
+def stats_db(d: np.ndarray, mask: np.ndarray) -> dict:
+    """Median and inter-quartile range of a dB image over a mask (1 dp)."""
+    v = d[mask & np.isfinite(d)]
+    q25, q50, q75 = np.percentile(v, [25, 50, 75])
+    return {"median": round(float(q50), 1), "p25": round(float(q25), 1), "p75": round(float(q75), 1)}
+
+
+def lonlat_bbox(rows: np.ndarray, cols: np.ndarray, grid) -> list[float]:
+    """[west, south, east, north] of a pixel block, from its four corners (UTM north is not true north)."""
+    r0, r1, c0, c1 = int(rows.min()), int(rows.max()), int(cols.min()), int(cols.max())
+    pts = [bs.pixel_to_lonlat(r, c, grid.x, grid.y, grid.zone, grid.letter) for r, c in ((r0, c0), (r0, c1), (r1, c0), (r1, c1))]
+    lon, lat = [p[0] for p in pts], [p[1] for p in pts]
+    return [round(min(lon), 6), round(min(lat), 6), round(max(lon), 6), round(max(lat), 6)]
+
+
+def patch_features(mask, kind, k, grid, hv, hh, base_hv, base_hh, coh, cleaned_by_epoch, px_m2):
+    """One feature set per connected patch, largest first, with what the app needs to inspect it.
+
+    hv_db / hh_db: patch median on every kept pass (after the per-pass reference offset), so the
+    app can show how the patch evolved. baseline_db: patch median of the baseline composite in the
+    channel the rule tests (HV for vegetation loss, HH for water). seen_on: passes whose confirmed
+    change of the same kind overlaps this patch.
+    """
+    lab, n = ndimage.label(mask)
+    if n == 0:
+        return []
+    sizes = ndimage.sum(mask, lab, range(1, n + 1))
+    feats = []
+    for rank, j in enumerate(np.argsort(-sizes, kind="stable"), start=1):
+        pm = lab == j + 1
+        rows, cols = np.nonzero(pm)
+        cr, cc = ndimage.center_of_mass(pm)
+        props = {
+            "kind": kind,
+            "epoch": k,
+            "patch_id": f"{kind[0]}{k}-{rank}",
+            "area_m2": area(pm, px_m2),
+            "hv_db": [round(float(np.nanmedian(d[pm])), 1) for d in hv],
+            "hh_db": [round(float(np.nanmedian(d[pm])), 1) for d in hh],
+            "baseline_db": round(float(np.median((base_hv if kind == "disturbed" else base_hh)[pm])), 1),
+            "drop_db_median": round(float(np.median((base_hv - hv[k])[pm])), 1) if kind == "disturbed" else None,
+            "coherence": round(float(np.nanmedian(coh[pm])), 2) if coh is not None and np.isfinite(coh[pm]).any() else None,
+            "seen_on": [e for e, m in cleaned_by_epoch.items() if (m & pm).any()],
+            "centroid": [round(v, 6) for v in bs.pixel_to_lonlat(int(round(cr)), int(round(cc)), grid.x, grid.y, grid.zone, grid.letter)],
+            "bbox": lonlat_bbox(rows, cols, grid),
+        }
+        feats += grid.features(pm, props)
+    return feats
 
 
 def save_sar(path: Path, d: np.ndarray, lo=-28.0, hi=-2.0):  # same scale as the legend and the demos
@@ -205,6 +259,9 @@ def main() -> int:
     grid = bs.Grid.__new__(bs.Grid)
     grid.x, grid.y, grid.zone, grid.letter = x, y, zone, letter
     last = date.fromisoformat(kept[-1]["date"])
+    # Confirmed, cleaned change on each pass that has a pass before it to confirm against.
+    loss_c = {k: bs.clean(confirmed(loss_f, k), min_px) for k in range(3, len(kept))}
+    water_c = {k: bs.clean(confirmed(water_f, k), min_px) for k in range(3, len(kept))}
     epochs, metrics, features = [], [], []
     for k, g in enumerate(kept):
         save_sar(OUT_STATIC / f"sar_{k}.png", hv[k])
@@ -225,8 +282,7 @@ def main() -> int:
         if k < 3:
             metrics.append(None)  # baseline passes, and the first pass after them has nothing to confirm against
             continue
-        loss = bs.clean(confirmed(loss_f, k), min_px)
-        water = bs.clean(confirmed(water_f, k), min_px)
+        loss, water = loss_c[k], water_c[k]
         m = {
             "disturbed_m2": area(loss, px_m2),
             "new_water_m2": area(water, px_m2),
@@ -241,8 +297,25 @@ def main() -> int:
             m["coherence_disturbed"] = round(float(np.nanmedian(c[1][loss])), 2)
             m["coherence_reference"] = round(float(np.nanmedian(c[1][ref])), 2)
         metrics.append(m)
-        features += grid.features(loss, {"kind": "disturbed", "epoch": k})
-        features += grid.features(water, {"kind": "new_water", "epoch": k})
+        cm = c[1] if c else None
+        features += patch_features(loss, "disturbed", k, grid, hv, hh, base_hv, base_hh, cm, loss_c, px_m2)
+        features += patch_features(water, "new_water", k, grid, hv, hh, base_hv, base_hh, cm, water_c, px_m2)
+
+    # HV on every kept pass: ground disturbed on the latest pass versus the stable vegetated reference.
+    latest_loss = loss_c[len(kept) - 1]
+    hv_series = {
+        "polarization": "HV",
+        "reference": [stats_db(d, ref) for d in hv],
+        "reference_m2": area(ref, px_m2),
+        "disturbed": [stats_db(d, latest_loss) for d in hv] if latest_loss.any() else None,
+        "disturbed_m2": area(latest_loss, px_m2),
+        "disturbed_epoch": len(kept) - 1,
+        "note": (
+            "Lee-filtered HV after the per-pass offset, which holds the reference median at its level on the latest pass; "
+            "the band is the inter-quartile range. 'Changed ground' is the ground confirmed as changed on the latest pass, "
+            "followed back through every pass."
+        ),
+    }
 
     final = metrics[-1]
     first, latest = kept[0]["date"], kept[-1]["date"]
@@ -286,6 +359,7 @@ def main() -> int:
         },
         "epochs": epochs,
         "metrics": metrics,
+        "hv_series": hv_series,
         "thresholds": {
             "drop_db": DROP_DB,
             "vegetated_below_reference_db": VEGETATED_BELOW_REF_DB,
