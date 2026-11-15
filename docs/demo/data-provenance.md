@@ -2,16 +2,16 @@
 
 ## Update 2026-09-18: real data downloaded and processed
 
-Earthdata Login was authenticated via a project-local `.env` (see `services/processing/auth.py`) after authorizing the "Alaska Satellite Facility NISAR Data Access" application on the team's Earthdata account. Both real granules below were downloaded (~5.96 GB and ~5.97 GB) and byte-size-verified. The full pipeline ran against real pixels — see [real-data-validation.md](../science/real-data-validation.md) for the complete methodology, what AOI/threshold choices were tried and rejected, and the honest results (0.056 km² new-inundation candidate near Hlawga Reservoir, confidence 0.639). The event is live at `GET /api/events/yangon-hlawga-track40-frame10` with `data_status: "REAL"`.
+Earthdata Login was authenticated via a project-local `.env` (see `services/processing/auth.py`) after authorizing the "Alaska Satellite Facility NISAR Data Access" application on the team's Earthdata account. Both real granules below were downloaded (~5.96 GB and ~5.97 GB) and byte-size-verified. The full pipeline ran against real pixels; that processed case study has since been removed from the app and repository.
 
 ## Real granules identified (verified 2026-09-18)
 
 Found via `scripts/search_nisar_myanmar.py` (asf_search v14.0.0, no auth needed for metadata search) against a Myanmar bounding box, then filtered to footprints containing Yangon (16.8N, 96.15E). Full result set: [data/catalog.json](../../data/catalog.json).
 
-| Candidate                        | Product | Granule ID (baseline)                                                                         | Granule ID (post-event)                                                                       | Baseline date | Post-event date | AOI                                                      | Download status                                                                            |
-| -------------------------------- | ------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------- | --------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| yangon-track40-frame10 (primary) | GCOV    | `NISAR_L2_PR_GCOV_029_040_A_010_4005_DHDH_A_20260827T230239_20260827T230313_P05023_N_F_J_001` | `NISAR_L2_PR_GCOV_030_040_A_010_4005_DHDH_A_20260908T230239_20260908T230313_P05023_N_F_J_001` | 2026-08-27    | 2026-09-08      | Yangon Region, Myanmar (final sub-AOI: Hlawga Reservoir) | **DOWNLOADED & PROCESSED** 2026-09-18 — byte-verified, 5,955,911,680 / 5,968,494,592 bytes |
-| yangon-track134-frame80 (backup) | GCOV    | `NISAR_L2_PR_GCOV_029_134_D_080_2005_DHDH_M_20260903T121136_20260903T121211_P05023_N_F_J_001` | `NISAR_L2_PR_GCOV_030_134_D_080_2005_SHSH_M_20260915T121136_20260915T121211_P05023_N_F_J_001` | 2026-09-03    | 2026-09-15      | Yangon Region, Myanmar                                   | Not yet re-tested individually                                                             |
+| Candidate                        | Product | Granule ID (baseline)                                                                         | Granule ID (post-event)                                                                       | Baseline date | Post-event date | AOI                    | Download status                                                                                               |
+| -------------------------------- | ------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------- | --------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------- |
+| yangon-track40-frame10 (primary) | GCOV    | `NISAR_L2_PR_GCOV_029_040_A_010_4005_DHDH_A_20260827T230239_20260827T230313_P05023_N_F_J_001` | `NISAR_L2_PR_GCOV_030_040_A_010_4005_DHDH_A_20260908T230239_20260908T230313_P05023_N_F_J_001` | 2026-08-27    | 2026-09-08      | Yangon Region, Myanmar | **DOWNLOADED** 2026-09-18 — byte-verified, 5,955,911,680 / 5,968,494,592 bytes; processed event since removed |
+| yangon-track134-frame80 (backup) | GCOV    | `NISAR_L2_PR_GCOV_029_134_D_080_2005_DHDH_M_20260903T121136_20260903T121211_P05023_N_F_J_001` | `NISAR_L2_PR_GCOV_030_134_D_080_2005_SHSH_M_20260915T121136_20260915T121211_P05023_N_F_J_001` | 2026-09-03    | 2026-09-15      | Yangon Region, Myanmar | Not yet re-tested individually                                                                                |
 
 ## Exact download blocker (reproduced 2026-09-18)
 
@@ -43,20 +43,7 @@ NASA/ISRO NISAR L2 GCOV product (ASF DAAC, Earthdata Login required)
   -> SvelteKit frontend                         [renders three-tier: NASA observation / our processing / AI interpretation]
 ```
 
-**Every stage above has now run against real pixel data** (2026-09-18) — see [real-data-validation.md](../science/real-data-validation.md) for the full methodology and honest results. The command that produced the live `yangon-hlawga-track40-frame10` event:
-
-```
-python scripts/inspect_nisar_product.py data/raw/<file>.h5   # confirmed all documented paths present, zero corrections needed
-python -m services.processing.pipeline_flood --mode real \
-  --baseline data/raw/NISAR_L2_PR_GCOV_029_040_A_010_4005_DHDH_A_20260827T230239_20260827T230313_P05023_N_F_J_001.h5 \
-  --post-event data/raw/NISAR_L2_PR_GCOV_030_040_A_010_4005_DHDH_A_20260908T230239_20260908T230313_P05023_N_F_J_001.h5 \
-  --baseline-granule-id NISAR_L2_PR_GCOV_029_040_A_010_4005_DHDH_A_20260827T230239_20260827T230313_P05023_N_F_J_001 \
-  --post-event-granule-id NISAR_L2_PR_GCOV_030_040_A_010_4005_DHDH_A_20260908T230239_20260908T230313_P05023_N_F_J_001 \
-  --aoi-lat 17.058 --aoi-lon 96.088 --aoi-half-width-km 7 \
-  --threshold-db -9.54 --lee-filter-size 3 \
-  --location-name "Hlawga Reservoir, Yangon Region, Myanmar" \
-  --event-id yangon-hlawga-track40-frame10
-```
+**Every stage above has run against real pixel data** (2026-09-18). That processed event has since been removed from the repository; run `python -m services.processing.pipeline_flood --mode real` with your own granules, AOI, threshold and filter size to produce a new one (see the README).
 
 The 22 fixture-based tests in `tests/` still pass unchanged and remain useful for fast, offline regression testing — they are not a substitute for the real run above, just a complement to it.
 

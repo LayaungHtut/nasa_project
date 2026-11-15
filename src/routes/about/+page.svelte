@@ -8,12 +8,12 @@
 			body: 'NISAR images the same ground on a 12-day repeat, through cloud. With calibrated thresholds and river-gauge checks, the Ayeyarwady delta and Bago river plains could get flood-extent maps during the season when optical satellites see least.'
 		},
 		{
-			title: 'Rice-season monitoring (shown here for one season)',
-			body: 'Twelve NISAR passes already show the paddies around Hlawga flooding in late August and brightening as the rice grows into October. Rice is Myanmar’s staple crop and most of it is grown in the monsoon, when clouds hide fields from optical satellites. The same method, scaled to the Ayeyarwady and Bago plains and checked against township crop calendars, could tell agricultural extension officers when fields were planted and which are lagging, without a field visit.'
+			title: 'Rice-season monitoring',
+			body: 'Rice is Myanmar’s staple crop and most of it is grown in the monsoon, when clouds hide fields from optical satellites. Flooded paddies look dark to radar and brighten as the rice grows, so repeat NISAR passes over the Ayeyarwady and Bago plains, checked against township crop calendars, could tell agricultural extension officers when fields were planted and which are lagging, without a field visit.'
 		},
 		{
 			title: 'Reservoir and wetland watch',
-			body: 'Hlawga supplies drinking water to Yangon. Across 12 passes its surface stays radar-bright whatever the wind, which is unusual for open water and worth checking for floating plants such as water hyacinth. Repeat NISAR passes, paired with operator level records, could flag such changes for the water utility every 12 days.'
+			body: 'Repeat NISAR passes over the reservoirs that supply Yangon, paired with operator level records, could flag changes in open water and floating vegetation for water managers every 12 days.'
 		},
 		{
 			title: 'Ground motion from InSAR',
@@ -62,9 +62,9 @@
 			<p class="mt-2 text-xs leading-relaxed text-slate-200">
 				NASA's "Dancing with the SARs" challenge calls for teams to leverage Synthetic Aperture
 				Radar (SAR) data to make complex Earth surface changes accessible, intuitive, and
-				scientifically transparent. Team YOUTHs built this product around one monsoon season of
-				surface change near our home city of Yangon: 12 NISAR passes over the paddy fields and
-				reservoir at Hlawga, from flooded fields in August to growing rice in October.
+				scientifically transparent. Team YOUTHs built this product to show how two NISAR radar
+				passes can flag possible water-extent change in Myanmar, and why a changed radar signal is
+				not, by itself, proof of a flood.
 			</p>
 		</div>
 
@@ -149,9 +149,8 @@
 
 		<div class="mt-4 space-y-3 text-xs leading-relaxed">
 			<p>
-				Our demonstration compares two L-band GCOV observations of Hlawga Reservoir (August 27 and
-				September 8, 2026) using deterministic thresholding. It flags possible water changes for
-				investigation:
+				Our demonstration compares two L-band GCOV radar scenes using deterministic thresholding. It
+				flags possible water changes for investigation:
 			</p>
 
 			<ol class="list-inside list-decimal space-y-2 pl-2 text-slate-200">
@@ -161,26 +160,17 @@
 				</li>
 				<li>
 					<strong>Lee Speckle Filtering:</strong> Granular speckle noise inherent to coherent radar systems
-					is smoothed using a 3&times;3 Lee filter for this case study. Residual speckle can remain.
+					is smoothed with a Lee filter; the window size is recorded with each scene. Residual speckle
+					can remain.
 				</li>
 				<li>
 					<strong>Specular Reflection Cutoff:</strong> Smooth open water surfaces reflect microwave beams
-					away from the sensor. We isolate pixels dropping below an empirical threshold (-9.54 dB for
-					this study area).
+					away from the sensor. We isolate pixels dropping below an empirical, scene-specific threshold,
+					recorded with each scene.
 				</li>
 				<li>
 					<strong>Connected Component Clustering:</strong> Pockets of detected change smaller than 8 contiguous
 					pixels are rejected to reduce small isolated detections. This can also discard small real changes.
-				</li>
-				<li>
-					<strong>Polarization Quality Check:</strong> We compare the HH and cross-polarized HV channels
-					on both dates, with the product's own interference and noise metadata. In these provisional
-					scenes HV fails our consistency checks, so classification uses HH only.
-				</li>
-				<li>
-					<strong>HH Change Map:</strong> A per-pixel dB difference between the dates shows where the
-					radar return brightened or darkened, beyond the water/land threshold. We then weigh competing
-					physical explanations against the recorded evidence.
 				</li>
 				<li>
 					<strong>Surface Extent Calculation:</strong> Vectorized boundaries are transformed into GeoJSON
@@ -232,10 +222,7 @@
 			</p>
 			<p>
 				Basemap tiles are provided by <strong>OpenFreeMap</strong>, using OpenMapTiles and
-				OpenStreetMap contributors' data. The independent optical check uses modified Copernicus
-				Sentinel-2 data (2026) via Element 84 Earth Search. Weather records come from ERA5
-				reanalysis via Open-Meteo (CC BY 4.0) and Yangon International Airport METAR reports via the
-				Iowa Environmental Mesonet. Client application engineered with SvelteKit, TypeScript,
+				OpenStreetMap contributors' data. Client application engineered with SvelteKit, TypeScript,
 				MapLibre GL JS, and TailwindCSS.
 			</p>
 		</div>

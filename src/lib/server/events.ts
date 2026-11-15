@@ -48,15 +48,12 @@ export async function getAuthoritativeEvents(): Promise<ChangeEvent[]> {
 
 							// Normalize location fields
 							const loc = metadataRaw.location || {};
-							const center = loc.center || [96.08796, 17.05796];
-							const bbox = loc.bbox || [96.021, 16.993, 96.154, 17.122];
+							const center = loc.center || existing?.location?.center || [0, 0];
+							const bbox = loc.bbox || existing?.location?.bbox || [0, 0, 0, 0];
 							const normalizedLocation = {
 								...existing?.location,
 								...loc,
-								name:
-									loc.name ||
-									existing?.location?.name ||
-									'Hlawga Reservoir, Yangon Region, Myanmar',
+								name: loc.name || existing?.location?.name || eventId,
 								country: loc.country || existing?.location?.country || 'Myanmar',
 								region: loc.region || existing?.location?.region || 'Yangon Region',
 								coordinates: loc.coordinates || [center[0], center[1]],
@@ -106,7 +103,7 @@ export async function getAuthoritativeEvents(): Promise<ChangeEvent[]> {
 		events.push(enriched);
 	}
 
-	// Ensure the real production event is first
+	// Real observations first, synthetic scenarios after
 	events.sort((a, b) => {
 		if (a.data_status === 'REAL' && b.data_status !== 'REAL') return -1;
 		if (b.data_status === 'REAL' && a.data_status !== 'REAL') return 1;

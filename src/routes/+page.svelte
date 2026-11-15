@@ -2,10 +2,6 @@
 	import { appState } from '$lib/stores/appState.svelte';
 	import MapContainer from '$lib/components/map/MapContainer.svelte';
 	import ScientificTierPanel from '$lib/components/panels/ScientificTierPanel.svelte';
-	import EvidenceExplorer from '$lib/components/panels/EvidenceExplorer.svelte';
-	import DriversPanel from '$lib/components/panels/DriversPanel.svelte';
-	import PolarizationPanel from '$lib/components/panels/PolarizationPanel.svelte';
-	import TimeSeriesPanel from '$lib/components/panels/TimeSeriesPanel.svelte';
 	import TimelineScrubber from '$lib/components/timeline/TimelineScrubber.svelte';
 	import ProvenanceBadge from '$lib/components/nav/ProvenanceBadge.svelte';
 	import SpaceAppsLogo from '$lib/components/brand/SpaceAppsLogo.svelte';
@@ -185,10 +181,6 @@
 
 			<!-- Three-Tier Scientific Provenance Panel -->
 			<div class="flex-1 space-y-4 p-4">
-				<TimeSeriesPanel />
-				<EvidenceExplorer />
-				<DriversPanel />
-				<PolarizationPanel />
 				<ScientificTierPanel />
 			</div>
 

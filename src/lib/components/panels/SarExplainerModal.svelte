@@ -221,7 +221,14 @@
 							stroke-dasharray="4,4"
 							opacity="0.8"
 						/>
-						<text x="690" y="145" fill="#34d399" font-size="11" font-weight="bold" text-anchor="end">
+						<text
+							x="690"
+							y="145"
+							fill="#34d399"
+							font-size="11"
+							font-weight="bold"
+							text-anchor="end"
+						>
 							✓ L-band radar can observe through cloud cover
 						</text>
 					{/if}
@@ -349,9 +356,7 @@
 			<div class="space-y-3 overflow-y-auto p-5 text-xs leading-relaxed text-slate-200">
 				{#if activeMode === 'optical_cloud'}
 					<div class="rounded-lg border border-rocket-red/70 bg-martian-red/90 p-3 text-white">
-						<h3 class="mb-1 text-sm font-bold text-white">
-							The Optical Satellite Limitation
-						</h3>
+						<h3 class="mb-1 text-sm font-bold text-white">The Optical Satellite Limitation</h3>
 						<p>
 							Optical instruments can measure reflected sunlight in visible and infrared bands.
 							Thick cloud cover can obscure the surface, limiting observations during some storms.
@@ -378,8 +383,8 @@
 						<p>
 							Smooth water often reflects radar energy away from the sensor and appears dark. The
 							return also depends on wind, surface roughness, viewing geometry and polarization.
-							There is no universal water threshold; our Hlawga comparison uses a scene-specific
-							threshold and remains unconfirmed.
+							There is no universal water threshold; each scene needs its own threshold, and a
+							threshold crossing alone does not confirm a flood.
 						</p>
 					</div>
 				{:else if activeMode === 'diffuse_land'}

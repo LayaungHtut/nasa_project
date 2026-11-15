@@ -1,5 +1,4 @@
 import { explainObservation } from '$lib/data/presentation';
-import realGeometry from '../../../data/processed/yangon-track40-frame10/change.geojson?raw';
 import type { ChangeEvent, ExplainResponse, GeoJsonFeatureCollection } from '$lib/types/api';
 import {
 	CURATED_EVENTS,
@@ -63,8 +62,6 @@ class ApiClient {
 	 */
 	async getGeometry(id: string): Promise<GeoJsonFeatureCollection> {
 		if (typeof window === 'undefined') {
-			if (id === 'yangon-track40-frame10')
-				return JSON.parse(realGeometry) as GeoJsonFeatureCollection;
 			if (id === 'demo-yangon-fixture') return YANGON_FIXTURE_GEOJSON;
 			if (id === 'bago-flood-2026') return BAGO_FLOOD_GEOJSON;
 			if (id === 'ayeyarwady-delta-2026') return DELTA_GEOJSON;
@@ -78,17 +75,6 @@ class ApiClient {
 			return (await res.json()) as GeoJsonFeatureCollection;
 		} catch (err) {
 			console.warn(`API getGeometry(${id}) fallback:`, err);
-			// Try fetching processed change.geojson directly
-			if (typeof window !== 'undefined' && id === 'yangon-track40-frame10') {
-				try {
-					const directRes = await fetch('/data/processed/yangon-track40-frame10/change.geojson');
-					if (directRes.ok) return (await directRes.json()) as GeoJsonFeatureCollection;
-				} catch {
-					// Use the bundled authoritative geometry if both network paths fail.
-				}
-			}
-			if (id === 'yangon-track40-frame10')
-				return JSON.parse(realGeometry) as GeoJsonFeatureCollection;
 			if (id === 'demo-yangon-fixture') return YANGON_FIXTURE_GEOJSON;
 			if (id === 'bago-flood-2026') return BAGO_FLOOD_GEOJSON;
 			if (id === 'ayeyarwady-delta-2026') return DELTA_GEOJSON;

@@ -1,6 +1,6 @@
 # Frontend Handoff — for Antigravity
 
-**Update 2026-09-18: real NISAR data is now live.** Earthdata Login was authorized, both real Track 40/Frame 10 granules (~5.96 GB / ~5.97 GB) were downloaded and byte-verified, and the full pipeline ran against real pixels. There is now a real, `"data_status": "REAL"` event — `yangon-hlawga-track40-frame10` — served alongside the synthetic fixture. Full methodology, what was tried and rejected, and honest limitations are in [real-data-validation.md](../science/real-data-validation.md) — read it before writing UI copy about this event, especially the "results" numbers (they're small and undramatic on purpose; do not imply more than 0.056 km² of change).
+**Update:** the real Track 40 / Frame 10 event that was processed on 2026-09-18 has been removed from the project. The API currently serves only the synthetic fixture below.
 
 Start the API with:
 
@@ -9,42 +9,19 @@ pip install -r services/api/requirements.txt -r services/processing/requirements
 uvicorn services.api.main:app --reload --port 8000
 ```
 
-It now serves **two** events:
+It serves one event:
 
-- `yangon-hlawga-track40-frame10` — **real** NISAR data, Hlawga Reservoir north of Yangon, `data_status: "REAL"`. Small result (0.056 km², confidence 0.639) — this is honest, not a bug; see the validation report.
 - `demo-yangon-fixture` — the original synthetic placeholder, `data_status: "SYNTHETIC_PLACEHOLDER"`, kept for offline/deterministic testing.
 
-**The `data_status` check is no longer optional or future-proofing — it's live now.** Both values genuinely occur in the current event list; if your UI doesn't branch on it, it will misrepresent one of these two events today.
+**Keep the `data_status` check.** Real events can be added back through `data/processed/<event-id>/`; if your UI doesn't branch on it, it will misrepresent synthetic data as an observation.
 
-## Real response examples (captured 2026-09-18, after the real-data run)
+## Response examples
 
 ### `GET /api/events`
 
 ```json
 {
   "events": [
-    {
-      "id": "yangon-hlawga-track40-frame10",
-      "title": "Hlawga Reservoir, Yangon Region, Myanmar water-extent change",
-      "phenomenon": "flood_extent_change",
-      "data_status": "REAL",
-      "location": { "name": "Hlawga Reservoir, Yangon Region, Myanmar", "bbox": [96.0213, 16.9939, 96.1546, 17.1221], "center": [96.0880, 17.0580] },
-      "observation_dates": { "baseline": "2026-08-27T23:02:39Z", "post_event": "2026-09-08T23:02:39Z" },
-      "source_products": [
-        { "mission": "NISAR", "product": "GCOV", "granule_id": "NISAR_L2_PR_GCOV_029_040_A_010_4005_DHDH_A_20260827T230239_20260827T230313_P05023_N_F_J_001", "daac": "ASF", "acquisition_date": "2026-08-27T23:02:39Z" },
-        { "mission": "NISAR", "product": "GCOV", "granule_id": "NISAR_L2_PR_GCOV_030_040_A_010_4005_DHDH_A_20260908T230239_20260908T230313_P05023_N_F_J_001", "daac": "ASF", "acquisition_date": "2026-09-08T23:02:39Z" }
-      ],
-      "processing": {
-        "method": "backscatter_threshold_change_detection_v1", "version": "1.0.0",
-        "threshold_db": -9.54, "min_cluster_pixels": 8,
-        "limitations": ["Flooded vegetation (forest, tall crops) may not be detected...", "Threshold is tuned for this AOI/scene and is not claimed to generalize globally without recalibration.", "..."]
-      },
-      "results": { "change_area_km2": 0.056, "confidence": 0.639, "changed_pixels": 556, "valid_fraction": 1.0 },
-      "tiles": { "preview_url": "/data/processed/yangon-hlawga-track40-frame10/preview.png", "baseline_preview_url": "/data/processed/yangon-hlawga-track40-frame10/baseline.png", "post_event_preview_url": "/data/processed/yangon-hlawga-track40-frame10/post_event.png", "change_preview_url": "/data/processed/yangon-hlawga-track40-frame10/change.png", "corner_coordinates": [[lon,lat],[lon,lat],[lon,lat],[lon,lat]] },
-      "change_geometry_url": "/data/processed/yangon-hlawga-track40-frame10/change.geojson",
-      "generated_at": "2026-09-17T20:07:26Z",
-      "has_explanation": false
-    },
     {
       "id": "demo-yangon-fixture",
       "title": "Yangon Region, Myanmar (synthetic AOI) water-extent change",

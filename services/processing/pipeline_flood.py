@@ -7,7 +7,7 @@ CLI usage:
         --baseline data/raw/<baseline>.h5 --post-event data/raw/<post>.h5 \\
         --baseline-granule-id <id> --post-event-granule-id <id> \\
         --aoi-lat 16.8 --aoi-lon 96.15 --aoi-half-width-km 15 \\
-        --event-id yangon-track40-frame10
+        --event-id <event-id>
 
 Writes to data/processed/<event-id>/:
     baseline_db.npy, post_event_db.npy    -- speckle-filtered dB backscatter

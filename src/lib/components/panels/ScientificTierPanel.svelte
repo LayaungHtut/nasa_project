@@ -2,7 +2,6 @@
 	import { appState } from '$lib/stores/appState.svelte';
 	import { api } from '$lib/api/client';
 	import { resolve } from '$app/paths';
-	import { getSensitivityForEvent, TESTED_THRESHOLDS_DB } from '$lib/data/sensitivity';
 	import {
 		Satellite,
 		Cpu,
@@ -11,21 +10,10 @@
 		ExternalLink,
 		Info,
 		CheckCircle2,
-		RefreshCw,
-		Sliders
+		RefreshCw
 	} from 'lucide-svelte';
 
 	let event = $derived(appState.selectedEvent);
-	let sensitivityPoints = $derived(getSensitivityForEvent(event.id));
-	let selectedFilterSize = $state<3 | 5>(3);
-	let selectedThresholdIndex = $state<number>(3); // Default to index 3 (-9.54 dB served)
-	let activeSensitivity = $derived(
-		sensitivityPoints.find(
-			(p) =>
-				p.filter_size === selectedFilterSize &&
-				p.threshold_db === TESTED_THRESHOLDS_DB[selectedThresholdIndex]
-		)
-	);
 	let isAiLoading = $state(false);
 	let aiExplanation = $state<string | null>(null);
 
@@ -264,224 +252,6 @@
 			</div>
 		{/if}
 
-		{#if event.id === 'yangon-track40-frame10'}
-			<div
-				class="mt-3 rounded-lg border border-yonder-400/50 bg-electric-blue/35 p-3 text-[11px] leading-relaxed text-white"
-			>
-				<strong class="text-neon-yellow">Evidence status: unconfirmed water-change candidate</strong
-				>
-				<p class="mt-1">
-					The recorded sensitivity sweep found that candidate area varies substantially with the
-					threshold and filter window. The displayed area is one configuration's estimate, not a
-					precise measurement of flooding.
-				</p>
-				<p class="mt-2">
-					<strong>What to do next:</strong> inspect the dated optical comparison below, seek reservoir
-					records, and check rainfall and wind conditions on both acquisition dates.
-				</p>
-			</div>
-		{/if}
-
-		{#if activeSensitivity}
-			<section
-				class="mt-3 rounded-lg border border-yonder-500/40 bg-slate-900/90 p-3 text-[11px] leading-relaxed"
-				aria-labelledby="sensitivity-explorer-heading"
-			>
-				<div class="flex items-center justify-between gap-2">
-					<h3
-						id="sensitivity-explorer-heading"
-						class="flex items-center gap-1.5 font-semibold text-white"
-					>
-						<Sliders class="h-4 w-4 text-neon-yellow" />
-						<span>Interactive Parameter Sensitivity Sweep</span>
-					</h3>
-					{#if activeSensitivity.is_served}
-						<span
-							class="rounded border border-neon-yellow/60 bg-electric-blue/50 px-1.5 py-0.5 font-mono text-[9px] font-bold text-neon-yellow uppercase"
-						>
-							Served Config
-						</span>
-					{:else}
-						<button
-							type="button"
-							onclick={() => {
-								selectedFilterSize = 3;
-								selectedThresholdIndex = 3;
-							}}
-							class="rounded border border-yonder-500/50 bg-deep-blue px-1.5 py-0.5 font-mono text-[9px] font-bold text-neon-yellow hover:border-neon-yellow"
-						>
-							Reset to Served (-9.54 dB, 3×3)
-						</button>
-					{/if}
-				</div>
-				<p class="mt-1 text-[10px] text-slate-300">
-					Explore all 14 real-raster pipeline runs from Investigation 2 to see how threshold and
-					speckle filter choices change the areas.
-				</p>
-
-				<!-- Filter Window Toggle + Threshold Slider -->
-				<div class="mt-2.5 space-y-2.5 rounded border border-slate-800 bg-deep-blue p-2.5">
-					<div class="flex items-center justify-between">
-						<span class="text-[10px] text-slate-300">Lee Speckle Filter Window:</span>
-						<div
-							class="inline-flex rounded border border-slate-700 bg-slate-900 p-0.5 font-mono text-[10px]"
-						>
-							<button
-								type="button"
-								onclick={() => (selectedFilterSize = 3)}
-								aria-pressed={selectedFilterSize === 3}
-								class="rounded px-2 py-0.5 transition-colors {selectedFilterSize === 3
-									? 'bg-neon-yellow font-bold text-deep-blue'
-									: 'text-slate-300 hover:text-white'}"
-							>
-								3×3 (Served)
-							</button>
-							<button
-								type="button"
-								onclick={() => (selectedFilterSize = 5)}
-								aria-pressed={selectedFilterSize === 5}
-								class="rounded px-2 py-0.5 transition-colors {selectedFilterSize === 5
-									? 'bg-neon-yellow font-bold text-deep-blue'
-									: 'text-slate-300 hover:text-white'}"
-							>
-								5×5
-							</button>
-						</div>
-					</div>
-
-					<div>
-						<div class="flex items-center justify-between text-[10px]">
-							<label for="sensitivity-threshold-slider" class="text-slate-300">
-								Water Cutoff Threshold:
-							</label>
-							<span class="font-mono font-bold text-neon-yellow">
-								{activeSensitivity.threshold_db.toFixed(2)} dB
-							</span>
-						</div>
-						<input
-							id="sensitivity-threshold-slider"
-							type="range"
-							min="0"
-							max={TESTED_THRESHOLDS_DB.length - 1}
-							step="1"
-							bind:value={selectedThresholdIndex}
-							aria-valuetext={`${activeSensitivity.threshold_db} dB`}
-							class="mt-1.5 h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-slate-800 accent-neon-yellow"
-						/>
-						<div class="mt-1 flex justify-between font-mono text-[9px] text-slate-400">
-							{#each TESTED_THRESHOLDS_DB as t (t)}
-								<span class={t === -9.54 ? 'font-bold text-neon-yellow' : ''}>
-									{t === -9.54 ? '-9.54*' : t.toFixed(0)}
-								</span>
-							{/each}
-						</div>
-					</div>
-				</div>
-
-				<!-- Resulting Areas for Selected Parameter Combination -->
-				<div class="mt-2.5 grid grid-cols-2 gap-2 font-mono text-[10px]">
-					<div class="rounded border border-slate-800 bg-deep-blue p-2">
-						<span class="block font-sans text-[9px] text-slate-300 uppercase">
-							New Inundation Candidate
-						</span>
-						<span class="text-sm font-bold text-yonder-400">
-							{activeSensitivity.new_inundation_km2.toFixed(3)} km²
-						</span>
-						<div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
-							<div
-								class="h-full bg-yonder-400 transition-all"
-								style:width={`${Math.min(100, (activeSensitivity.new_inundation_km2 / 1.508) * 100)}%`}
-							></div>
-						</div>
-					</div>
-					<div class="rounded border border-slate-800 bg-deep-blue p-2">
-						<span class="block font-sans text-[9px] text-slate-300 uppercase">
-							Apparent Water Loss
-						</span>
-						<span class="text-sm font-bold text-neon-yellow">
-							{activeSensitivity.water_loss_km2.toFixed(3)} km²
-						</span>
-						<div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
-							<div
-								class="h-full bg-neon-yellow transition-all"
-								style:width={`${Math.min(100, (activeSensitivity.water_loss_km2 / 18.217) * 100)}%`}
-							></div>
-						</div>
-					</div>
-					<div class="rounded border border-slate-800/80 bg-deep-blue/80 px-2 py-1.5">
-						<span class="block font-sans text-[9px] text-slate-400">Baseline water (Aug 27)</span>
-						<span class="text-white">{activeSensitivity.baseline_water_km2.toFixed(3)} km²</span>
-					</div>
-					<div class="rounded border border-slate-800/80 bg-deep-blue/80 px-2 py-1.5">
-						<span class="block font-sans text-[9px] text-slate-400">Repeat water (Sep 8)</span>
-						<span class="text-white">{activeSensitivity.post_water_km2.toFixed(3)} km²</span>
-					</div>
-				</div>
-			</section>
-		{/if}
-
-		{#if event.independent_validation}
-			{@const validation = event.independent_validation}
-			{@const pair = validation.exploratory}
-			<section
-				class="mt-3 rounded-lg border border-slate-700 bg-slate-900/80 p-3 text-[11px] leading-relaxed"
-				aria-labelledby="optical-validation-heading"
-			>
-				<h3 id="optical-validation-heading" class="font-semibold text-white">
-					Independent optical check
-				</h3>
-				<p class="mt-1 font-semibold text-neon-yellow">
-					Check completed; water change remains unconfirmed.
-				</p>
-				<p class="mt-2 text-slate-200">
-					Within ±{validation.primary_window_days} days of each radar date,
-					{validation.primary_joint_clear_pixels}/{validation.candidate_pixels} candidate cells are clear
-					in both optical scenes. Clouds prevent a close-date change check.
-				</p>
-				<p class="mt-2 text-slate-200">
-					Wider ±{pair.window_days}-day check: {pair.baseline_date.slice(0, 10)}
-					({pair.baseline_offset_days.toFixed(2)} days from baseline radar) and
-					{pair.repeat_date.slice(0, 10)} (+{pair.repeat_offset_days.toFixed(2)} days from repeat radar).
-				</p>
-				<dl
-					class="mt-2 grid grid-cols-3 gap-2 rounded border border-slate-800 bg-deep-blue p-2 text-center"
-				>
-					<div>
-						<dt class="text-slate-300">Land → water</dt>
-						<dd class="font-mono text-base font-bold text-yonder-400">
-							{pair.land_to_water_pixels}
-						</dd>
-					</div>
-					<div>
-						<dt class="text-slate-300">Land → land</dt>
-						<dd class="font-mono text-base font-bold text-white">{pair.land_to_land_pixels}</dd>
-					</div>
-					<div>
-						<dt class="text-slate-300">Unknown</dt>
-						<dd class="font-mono text-base font-bold text-neon-yellow">{pair.unknown_pixels}</dd>
-					</div>
-				</dl>
-				<p class="mt-2 text-slate-300">
-					Counts use the 10 m radar grid. Sentinel-2 classification is a 20 m reference, not field
-					ground truth. Timing differences prevent confirmation of the radar-date change; land
-					classifications at other times do not prove radar errors.
-				</p>
-				<div class="mt-2.5 flex flex-wrap gap-3 text-[11px]">
-					<a
-						href={resolve('/data/[...path]', { path: validation.figure_path })}
-						target="_blank"
-						rel="noreferrer"
-						class="brand-link-secondary">View dated optical overlays</a
-					>
-					<a
-						href={resolve('/data/[...path]', { path: validation.report_path })}
-						download="hlawga-optical-validation.json"
-						class="brand-link-secondary">Download validation evidence</a
-					>
-				</div>
-			</section>
-		{/if}
-
 		{#if event.statistics}
 			<dl class="mt-3 grid grid-cols-2 gap-2 text-[11px]">
 				<div>
@@ -499,13 +269,6 @@
 			</dl>
 		{/if}
 		<div class="mt-3 flex flex-wrap gap-3 text-[11px]">
-			{#if event.data_status === 'REAL' && event.timeseries}
-				<a
-					href={resolve('/api/events/[id]/report', { id: event.id })}
-					download={`${event.id}-report.html`}
-					class="brand-link-secondary">Download analysis report</a
-				>
-			{/if}
 			<a
 				href={resolve('/api/events/[id]', { id: event.id })}
 				download={`${event.id}.json`}

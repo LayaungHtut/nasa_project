@@ -1,22 +1,8 @@
 <script lang="ts">
 	import { appState, type LayerViewMode } from '$lib/stores/appState.svelte';
-	import {
-		Layers,
-		Eye,
-		Maximize2,
-		Sparkles,
-		SplitSquareVertical,
-		Contrast,
-		CalendarRange,
-		CalendarDays,
-		Map as MapIcon,
-		Sprout
-	} from 'lucide-svelte';
+	import { Layers, Eye, Maximize2, Sparkles, SplitSquareVertical } from 'lucide-svelte';
 
 	let { onResetCamera }: { onResetCamera?: () => void } = $props();
-
-	let polarimetry = $derived(appState.selectedEvent.polarimetry);
-	let showsChannel = $derived(['compare', 'baseline', 'post'].includes(appState.activeLayer));
 
 	const layers: Array<{ id: LayerViewMode; label: string; icon: typeof Layers; hint: string }> = [
 		{
@@ -33,69 +19,19 @@
 		},
 		{ id: 'post', label: 'Repeat SAR', icon: Layers, hint: 'Second acquired radar observation' },
 		{
-			id: 'difference',
-			label: 'HH Change',
-			icon: Contrast,
-			hint: 'Where the HH radar return got brighter or darker between the two dates'
-		},
-		{
 			id: 'change_mask',
 			label: 'Change Candidates',
 			icon: Sparkles,
 			hint: 'Threshold-based candidates; not confirmed flooding'
 		}
 	];
-	let seriesLayer = $derived(
-		appState.selectedEvent.timeseries
-			? [
-					{
-						id: 'series' as const,
-						label: 'Monsoon Series',
-						icon: CalendarRange,
-						hint: `All ${appState.selectedEvent.timeseries.dates.length} NISAR passes in HH; pick a date on the timeline or press play`
-					},
-					{
-						id: 'period' as const,
-						label: 'Compare Periods',
-						icon: CalendarDays,
-						hint: 'Swipe between any two of the passes and see how much each surface changed'
-					},
-					{
-						id: 'landcover' as const,
-						label: 'Land Cover',
-						icon: MapIcon,
-						hint: 'Paddy, reservoir and built-up land (ESA WorldCover), with the two-date water loss on top'
-					},
-					{
-						id: 'field_timing' as const,
-						label: 'Field Timing',
-						icon: Sprout,
-						hint: 'When each paddy field was darkest (most water-like) before its radar return rose'
-					}
-				]
-			: []
-	);
-	let availableLayers = $derived(
-		appState.opticalEvidence
-			? [
-					...seriesLayer,
-					...layers,
-					{
-						id: 'optical_compare' as const,
-						label: 'Optical Evidence',
-						icon: Eye,
-						hint: 'Swipe between NISAR HH and dated Sentinel-2; click a candidate for evidence'
-					}
-				]
-			: [...seriesLayer, ...layers]
-	);
 </script>
 
 <div
 	class="flex flex-wrap items-center gap-1.5 rounded-lg border border-yonder-500/40 bg-deep-blue/95 p-1.5 shadow-xl backdrop-blur-md"
 >
 	<div class="flex flex-wrap items-center gap-1">
-		{#each availableLayers as layer (layer.id)}
+		{#each layers as layer (layer.id)}
 			{@const Icon = layer.icon}
 			<button
 				type="button"
@@ -117,30 +53,6 @@
 			</button>
 		{/each}
 	</div>
-
-	{#if polarimetry && showsChannel}
-		<div class="mx-1 h-4 w-[1px] bg-yonder-500/30"></div>
-		<div class="flex items-center gap-1" role="group" aria-label="Radar polarization channel">
-			{#each ['HH', 'HV'] as const as channel (channel)}
-				<button
-					type="button"
-					onclick={() => (appState.polarization = channel)}
-					aria-pressed={appState.polarization === channel}
-					title={channel === 'HH'
-						? 'Co-polarized channel: sent and received horizontally'
-						: 'Cross-polarized channel: sent horizontally, received vertically'}
-					class="rounded-md px-2 py-1.5 font-mono text-xs font-bold transition-all {appState.polarization ===
-					channel
-						? channel === 'HV'
-							? 'border border-neon-yellow/70 bg-deep-blue text-neon-yellow'
-							: 'border border-yonder-500/60 bg-electric-blue/70 text-white'
-						: 'border border-transparent text-slate-300 hover:bg-electric-blue/30 hover:text-white'}"
-				>
-					{channel}
-				</button>
-			{/each}
-		</div>
-	{/if}
 
 	<div class="mx-1 hidden h-4 w-[1px] bg-yonder-500/30 md:block"></div>
 

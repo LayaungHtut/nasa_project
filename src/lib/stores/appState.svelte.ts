@@ -1,54 +1,16 @@
 import type { ChangeEvent } from '$lib/types/api';
 import { CURATED_EVENTS } from '$lib/data/fixtures';
-import { opticalEvidence } from '$lib/data/evidence';
-import type { RadarReference } from '$lib/types/evidence';
-import { periodPresets } from '$lib/data/timeseries';
 
-export type LayerViewMode =
-	| 'series'
-	| 'field_timing'
-	| 'landcover'
-	| 'period'
-	| 'compare'
-	| 'baseline'
-	| 'post'
-	| 'difference'
-	| 'change_mask'
-	| 'optical_compare';
-export type Polarization = 'HH' | 'HV';
-export const DEMO_STEP_COUNT = 9;
+export type LayerViewMode = 'compare' | 'baseline' | 'post' | 'change_mask';
+export const DEMO_STEP_COUNT = 7;
 
 class AppState {
 	events = $state<ChangeEvent[]>(CURATED_EVENTS);
-	selectedEventId = $state<string>('yangon-track40-frame10');
+	selectedEventId = $state<string>(CURATED_EVENTS[0].id);
 	selectedEvent = $state<ChangeEvent>(CURATED_EVENTS[0]);
 	activeLayer = $state<LayerViewMode>('compare');
-	/** Radar channel shown in the before/after layers; only HH is used for classification. */
-	polarization = $state<Polarization>('HH');
 	sliderPosition = $state<number>(50); // 0 to 100%
 	opacity = $state<number>(0.85);
-	opticalEvidence = $derived(opticalEvidence(this.selectedEvent));
-	opticalSceneId = $state<string | null>(null);
-	opticalScene = $derived(
-		this.opticalEvidence?.scenes.find((scene) => scene.id === this.opticalSceneId) ??
-			this.opticalEvidence?.scenes.at(-1)
-	);
-	radarReference = $state<RadarReference>('repeat');
-	selectedCandidateId = $state<number | null>(null);
-	selectedCandidate = $derived(
-		this.opticalEvidence?.candidates.find(
-			(candidate) => candidate.component === this.selectedCandidateId
-		)
-	);
-	candidateFocusRequest = $state(0);
-
-	selectCandidate(id: number | null, focus = false) {
-		this.selectedCandidateId = id;
-		if (focus && id !== null) {
-			this.activeLayer = 'optical_compare';
-			this.candidateFocusRequest++;
-		}
-	}
 
 	// Modals & Panels
 	isSarModalOpen = $state<boolean>(false);
@@ -58,22 +20,6 @@ class AppState {
 
 	// Timeline
 	selectedObservationIndex = $state<number>(1); // Default to repeat pass (index 1)
-	/** Index into selectedEvent.timeseries.dates, shown by the 'series' layer. */
-	seriesIndex = $state<number>(0);
-	/** Two passes chosen in 'period' mode; null until the user picks, then the first preset applies. */
-	periodChoice = $state<{ from: number; to: number } | null>(null);
-	periodPresets = $derived(
-		this.selectedEvent.timeseries
-			? periodPresets(
-					this.selectedEvent.timeseries,
-					this.selectedEvent.observation_dates.baseline,
-					this.selectedEvent.observation_dates.post_event
-				)
-			: []
-	);
-	/** Land-cover layer: overlay the two-date apparent water loss on the classes. */
-	showWaterLoss = $state(true);
-	periodRange = $derived(this.periodChoice ?? this.periodPresets[0] ?? null);
 
 	// Demo Mode for Space Apps judges
 	isDemoModeActive = $state<boolean>(false);
@@ -109,18 +55,16 @@ class AppState {
 			);
 			this.sliderPosition = 50;
 			this.activeLayer = 'compare';
-			this.seriesIndex = 0;
-			this.periodChoice = null;
-			this.polarization = 'HH';
-			this.opticalSceneId = null;
-			this.radarReference = 'repeat';
-			this.selectedCandidateId = null;
-			this.candidateFocusRequest = 0;
 		}
 	}
 
+	/** The tour follows the first event in the catalog. */
+	private get demoEventId() {
+		return this.events[0]?.id ?? CURATED_EVENTS[0].id;
+	}
+
 	startJudgeDemo() {
-		this.selectEvent('yangon-track40-frame10');
+		this.selectEvent(this.demoEventId);
 		this.isDemoModeActive = true;
 		this.demoStep = 1;
 		this.applyDemoStep(1);
@@ -149,38 +93,28 @@ class AppState {
 
 	private applyDemoStep(step: number) {
 		switch (step) {
-			case 1: // Hook: the season animation when the event has one
-				this.activeLayer = this.selectedEvent.timeseries ? 'series' : 'compare';
-				this.seriesIndex = 0;
+			case 1: // Hook: the two-date swipe comparison
+				this.activeLayer = 'compare';
 				this.sliderPosition = 50;
 				break;
 			case 2: // Fly to Event
-				this.selectEvent('yangon-track40-frame10');
+				this.selectEvent(this.demoEventId);
 				break;
-			case 3: // Baseline view (August 27, 2026 reference)
+			case 3: // Baseline view
 				this.activeLayer = 'baseline';
 				this.selectedObservationIndex = 0;
 				break;
-			case 4: // Post-Event view (September 8, 2026 repeat pass)
+			case 4: // Repeat-pass view
 				this.activeLayer = 'post';
 				this.selectedObservationIndex = 1;
 				break;
 			case 5: // Reveal change detected
 				this.activeLayer = 'change_mask';
 				break;
-			case 6: // HH change map and competing explanations
-				this.isSarModalOpen = false;
-				this.polarization = 'HH';
-				this.activeLayer = 'difference';
-				break;
-			case 7: // Field by field: the per-pixel test with forest as the control
-				this.isSarModalOpen = false;
-				this.activeLayer = this.selectedEvent.timeseries ? 'field_timing' : 'difference';
-				break;
-			case 8: // SAR explainer
+			case 6: // SAR explainer
 				this.isSarModalOpen = true;
 				break;
-			case 9: // Grounded AI and data provenance
+			case 7: // Grounded AI and data provenance
 				this.isSarModalOpen = false;
 				this.isAiPanelExpanded = true;
 				this.isProvenanceExpanded = true;

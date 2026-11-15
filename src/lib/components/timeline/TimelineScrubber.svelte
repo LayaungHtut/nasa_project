@@ -4,54 +4,28 @@
 	import { Calendar, Play, Pause } from 'lucide-svelte';
 
 	let event = $derived(appState.selectedEvent);
-	let series = $derived(event.timeseries);
-	// With a time series, every pass is a step; the two analysed dates keep their labels.
-	let observations = $derived(
-		series
-			? series.dates.map((d) => ({
-					date: d.date,
-					granule_id: d.granule_id,
-					label:
-						d.date === event.observation_dates.baseline
-							? 'Baseline observation'
-							: d.date === event.observation_dates.post_event
-								? 'Repeat observation'
-								: 'NISAR pass'
-				}))
-			: observationTimeline(event)
-	);
+	let observations = $derived(observationTimeline(event));
 	let isPlaying = $state(false);
 
 	$effect(() => {
-		// Stop playback when the dataset or tour step changes; the tour's opening step plays the
-		// season itself, because the tour card covers the Play button.
+		// Stop playback when the dataset changes.
 		void appState.selectedEvent.id;
-		isPlaying = appState.isDemoModeActive && appState.demoStep === 1 && Boolean(series);
+		isPlaying = false;
 	});
 
 	$effect(() => {
 		if (!isPlaying || observations.length < 2) return;
-		const timer = setInterval(
-			() => {
-				const current = series ? appState.seriesIndex : appState.selectedObservationIndex;
-				selectObservation((current + 1) % observations.length);
-			},
-			series ? 1200 : 1800
-		);
+		const timer = setInterval(() => {
+			selectObservation((appState.selectedObservationIndex + 1) % observations.length);
+		}, 1800);
 		return () => clearInterval(timer);
 	});
 
 	function isSelected(idx: number): boolean {
-		if (!series) return appState.activeLayer === (idx === 0 ? 'baseline' : 'post');
-		return appState.activeLayer === 'series' && appState.seriesIndex === idx;
+		return appState.activeLayer === (idx === 0 ? 'baseline' : 'post');
 	}
 
 	function selectObservation(index: number) {
-		if (series) {
-			appState.seriesIndex = index;
-			appState.activeLayer = 'series';
-			return;
-		}
 		appState.selectedObservationIndex = index;
 		// Update active layer accordingly
 		if (index === 0) {
@@ -74,7 +48,7 @@
 			<div class="flex items-center gap-2">
 				<Calendar class="h-4 w-4 text-yonder-400" />
 				<span class="text-[11px] font-bold tracking-wider text-white uppercase">
-					{series ? `${observations.length} NISAR passes, HH (UTC)` : 'Acquisition Timeline (UTC)'}
+					Acquisition Timeline (UTC)
 				</span>
 			</div>
 			<div class="flex items-center gap-1.5">

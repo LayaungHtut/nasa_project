@@ -67,9 +67,8 @@ def change_stats(change_mask: np.ndarray, pixel_area_m2: float, valid_mask: np.n
     changed_pixels = int((change_mask & valid_mask).sum())
     area_km2 = changed_pixels * pixel_area_m2 / 1e6
     valid_fraction = valid_pixels / change_mask.size if change_mask.size else 0.0
-    # Saturation point tuned against the real Hlawga Reservoir run
-    # (2026-09-18): 556 real detected pixels is a modest, plausible
-    # result, not a saturated-confidence one -- the original /200.0
+    # Saturation point chosen so a few hundred real detected pixels is a
+    # modest, plausible result, not a saturated-confidence one -- the original /200.0
     # divisor hit 1.0 on essentially any real detection, which is exactly
     # the "manufactured probability" failure mode this metric must avoid.
     # /2000.0 keeps small (<100px, likely speckle) clusters near 0 while

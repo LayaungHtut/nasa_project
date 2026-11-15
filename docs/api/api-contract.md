@@ -35,17 +35,17 @@ type ChangeEvent = {
 		version: string;
 		threshold_db: number;
 		min_cluster_pixels: number;
-		speckle_filter_size?: number; // e.g. 3 for a 3x3 Lee filter -- may differ from the methodology default; see real-data-validation.md for why
+		speckle_filter_size?: number; // e.g. 3 for a 3x3 Lee filter -- may differ from the methodology default
 		limitations: string[]; // always non-empty, pulled from limitations.md
 	};
 	results: {
 		change_area_km2: number;
 		confidence: number; // 0-1, our own metric, not NASA's, kept for compatibility
-		confidence_type?: 'heuristic_detection_score'; // explicit: NOT a statistical probability -- see real-data-validation.md
+		confidence_type?: 'heuristic_detection_score'; // explicit: NOT a statistical probability
 		changed_pixels: number;
 		valid_fraction: number;
 	};
-	statistics_url?: string; // full audit-trail JSON (pixel counts, AOI area, filter/threshold used) -- see real-data-validation.md
+	statistics_url?: string; // full audit-trail JSON (pixel counts, AOI area, filter/threshold used)
 	tiles: {
 		preview_url: string; // 3-panel (baseline|post|change) strip PNG, kept for backward compat
 		baseline_preview_url?: string; // single baseline-only PNG -- use this + the two below for per-layer MapLibre ImageSources

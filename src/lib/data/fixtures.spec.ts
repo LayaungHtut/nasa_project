@@ -8,23 +8,6 @@ import {
 } from './fixtures';
 
 describe('Curated NISAR Scientific Fixtures', () => {
-	it('should contain the verified real Yangon Track 40 event with REAL data_status', () => {
-		const realEvent = CURATED_EVENTS.find((e) => e.id === 'yangon-track40-frame10');
-		expect(realEvent).toBeDefined();
-		if (!realEvent) return;
-
-		expect(realEvent.data_status).toBe('REAL');
-		expect(realEvent.phenomenon).toBe('flood_extent_change');
-		expect(realEvent.results.change_area_km2).toBe(0.056);
-		expect(realEvent.results.changed_pixels).toBe(556);
-		expect(realEvent.results.confidence).toBe(0.639);
-		expect(realEvent.source_products.length).toBe(2);
-		expect(realEvent.source_products[0].mission).toBe('NISAR');
-		expect(realEvent.source_products[0].product).toBe('GCOV');
-		expect(realEvent.source_products[0].daac).toBe('ASF');
-		expect(realEvent.processing.threshold_db).toBe(-9.54);
-	});
-
 	it('should contain synthetic fixtures honestly tagged as SYNTHETIC_PLACEHOLDER', () => {
 		const demoEvent = CURATED_EVENTS.find((e) => e.id === 'demo-yangon-fixture');
 		expect(demoEvent).toBeDefined();
