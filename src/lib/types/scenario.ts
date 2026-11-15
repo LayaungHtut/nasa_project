@@ -1,9 +1,9 @@
-/** Shape of src/lib/data/scenarios/*.json: simulated demos from scripts/build_scenarios.py, real NISAR from scripts/build_hpakant.py. */
+/** Shape of src/lib/data/scenarios/*.json, all built from real NISAR granules: scripts/build_hpakant.py and scripts/build_slope.py. */
 import type { FeatureCollection } from 'geojson';
 
-export type ScenarioModule = 'observed' | 'mining' | 'landslide';
-/** REAL: measured from NISAR granules. SIMULATED: synthetic demo scenes. */
-export type ScenarioDataStatus = 'SIMULATED' | 'REAL';
+export type ScenarioModule = 'observed' | 'slope';
+/** REAL: measured from NISAR granules. Every module ships real data; there is no simulated mode. */
+export type ScenarioDataStatus = 'REAL';
 export type Corner = [number, number];
 
 export interface Epoch {
@@ -19,27 +19,7 @@ export interface Epoch {
 	coherence_pair?: [string, string] | null;
 }
 
-export interface MiningMetrics {
-	new_clearing_m2: number;
-	inside_m2: number;
-	outside_m2: number;
-	outside_beyond_tolerance_m2: number;
-	max_distance_outside_m: number;
-	low_coherence_outside_m2: number;
-	max_subsidence_outside_cm: number;
-}
-
-export interface LandslideMetrics {
-	landslide_m2: number;
-	impoundment_m2: number;
-	channel_shift_m: number;
-	new_channel_m2: number;
-	abandoned_channel_m2: number;
-	control_reach_water_change_pct: number;
-	coherence_at_slide: number | null;
-}
-
-interface ScenarioBase {
+export interface ScenarioBase {
 	id: string;
 	data_status: ScenarioDataStatus;
 	title: string;
@@ -66,41 +46,6 @@ interface ScenarioBase {
 	/** Null when there is no independent reference to score against. */
 	validation: { note: string; recall: number | null; precision: number | null };
 	geojson: FeatureCollection;
-}
-
-export interface MiningScenario extends ScenarioBase {
-	module: 'mining';
-	metrics: MiningMetrics[];
-	thresholds: {
-		breach_outside_m2: number;
-		tolerance_m: number;
-		subsidence_watch_cm: number;
-		clearing_drop_db: number;
-		min_cluster_m2: number;
-		coherence_min: number;
-	};
-	permit: { operator: string; permit_id: string; area_m2: number };
-}
-
-export interface LandslideScenario extends ScenarioBase {
-	module: 'landslide';
-	metrics: LandslideMetrics[];
-	thresholds: {
-		landslide_drop_db: number;
-		landslide_min_m2: number;
-		water_db: number;
-		channel_shift_m: number;
-		new_channel_min_m2: number;
-		coherence_min: number;
-		link_max_km: number;
-		link_max_days: number;
-	};
-	linkage: {
-		river_distance_km: number;
-		slide_is_upstream: boolean;
-		precursor_creep_cm: number;
-		precursor_pass: number;
-	};
 }
 
 /** Surface change measured on one pass, against the baseline composite; confirmed on two consecutive passes. */
@@ -193,4 +138,71 @@ export interface ObservedScenario extends ScenarioBase {
 	};
 }
 
-export type Scenario = ObservedScenario | MiningScenario | LandslideScenario;
+/** Per 12-day GUNW pair: how much of the window could be read, and the noise on flat reference ground. */
+export interface SlopeMetrics {
+	measured_pct: number;
+	reference_scatter_cm: number | null;
+	/** Days between the previous pair's end and this pair's start; that time is not measured. */
+	gap_before_days: number;
+	/** Share of the window with a rate from the pairs up to this one. */
+	rate_coverage_pct: number;
+}
+
+/** Steep ground moving faster than the reference scatter allows: a landslide indicator, not a confirmed slide. */
+export interface SlopeCandidate {
+	candidate_id: string;
+	area_m2: number;
+	slope_deg: number;
+	/** Mean line-of-sight rate; positive is toward the satellite. */
+	rate_cm_yr: number;
+	direction: 'toward' | 'away';
+	sign_agreement: number;
+	pairs_measured: number;
+	/** Cumulative LOS motion at each epoch (sum of patch-median pair displacements); null where unmeasured. */
+	series_cm: Array<number | null>;
+	centroid: Corner;
+	bbox: [number, number, number, number];
+}
+
+export interface SlopeScenario extends ScenarioBase {
+	module: 'slope';
+	metrics: SlopeMetrics[];
+	candidates: SlopeCandidate[];
+	reference_series_cm: Array<number | null>;
+	thresholds: {
+		coherence_min: number;
+		flat_max_deg: number;
+		slope_min_deg: number;
+		min_valid_frac: number;
+		sigma_k: number;
+		sign_agreement_min: number;
+		min_cluster_m2: number;
+		display_cm_yr: number;
+	};
+	uncertainty: {
+		rate_sigma_cm_yr: number;
+		reference_m2: number;
+		rate_coverage_pct: number;
+		unmeasured_gap_days: number;
+		unread_pairs: string[];
+		rule_pass_flat_pct: number;
+		rule_pass_steep_pct: number;
+		centre_rate_cm_yr: number;
+		rim_rate_cm_yr: number;
+		residual_rate_vs_elevation_cm_yr_per_100m: number;
+		notes: string[];
+	};
+	provenance: {
+		source_archive: string;
+		track: number;
+		frame: number;
+		orbit_direction: string;
+		epsg: number;
+		gunw_granules: string[];
+		gcov_granules: string[];
+		dem: { product: string; url: string };
+		sign_convention: { statement: string; source: string };
+	};
+}
+
+export type Scenario = ObservedScenario | SlopeScenario;

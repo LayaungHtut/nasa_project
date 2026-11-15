@@ -15,58 +15,31 @@
 					`A change counts only on two consecutive passes, in patches of at least ${ha(s.thresholds.min_cluster_m2)}.`,
 					'Uncertainty: the same rule between the two baseline passes gives the false-alarm rate. GUNW coherence over the changed ground is supporting evidence.'
 				]
-			: s.module === 'mining'
-				? [
-						`Lee speckle filter (5 × 5) on each ${s.sensor.polarization} backscatter pass.`,
-						`Log-ratio against the baseline pass; a drop of more than ${s.thresholds.clearing_drop_db} dB on ground that was vegetated marks new clearing (forest volume scattering lost).`,
-						`Clusters smaller than ${ha(s.thresholds.min_cluster_m2)} are dropped as speckle.`,
-						`New clearing is split by the permit polygon, with a ${s.thresholds.tolerance_m} m tolerance band for geolocation error.`,
-						`InSAR: coherence below ${s.thresholds.coherence_min} flags ground disturbed between passes; line-of-sight phase gives centimetre ground motion where coherence holds.`
-					]
-				: [
-						`Lee speckle filter on each ${s.sensor.polarization} pass; water where filtered backscatter is below ${s.thresholds.water_db} dB (specular reflection).`,
-						`Landslide: off-channel return drops by more than ${s.thresholds.landslide_drop_db} dB together with InSAR coherence below ${s.thresholds.coherence_min}.`,
-						'Impoundment: new water upstream of the slide. Diversion: new and abandoned water downstream, and the shift of the channel centre row by row.',
-						`Control reach above the lake: if its water area also changed, a basin-wide flood is the simpler explanation.`,
-						`Root cause: a slide upstream on the same river, within ${s.thresholds.link_max_km} km and ${s.thresholds.link_max_days} days before the shift.`
-					]
+			: [
+					`Each 12-day GUNW pair: line-of-sight motion = (unwrapped phase − the product's ionosphere phase screen) × wavelength / 4π, positive toward the satellite (ISCE3 sign convention). Pixels kept where coherence ≥ ${s.thresholds.coherence_min} and the unwrapper assigned a connected component.`,
+					`Each pair: a planar ramp (leftover ionosphere, orbit) and a linear trend with NASADEM elevation (height-dependent troposphere) are fitted on ground under ${s.thresholds.slope_min_deg}° and removed; then the pair is tied to flat ground (under ${s.thresholds.flat_max_deg}°) that stays coherent, in the same connected component.`,
+					`Mean rate per pixel: measured motion divided by measured time, for pixels read on at least ${Math.round(s.thresholds.min_valid_frac * 100)}% of pairs; gaps between pairs do not count.`,
+					`Candidate: ground steeper than ${s.thresholds.slope_min_deg}° whose rate exceeds ${s.thresholds.sigma_k}× the scatter on the flat reference, moving the same way on at least ${Math.round(s.thresholds.sign_agreement_min * 100)}% of its pairs, in patches of at least ${ha(s.thresholds.min_cluster_m2)}.`,
+					'A candidate is a landslide indicator to check, not a confirmed slide: excavation, dumping and erosion also move ground, and line of sight is not the downslope direction.'
+				]
 	);
 </script>
 
-{#if s.data_status === 'REAL'}
-	<section
-		class="rounded-lg border border-neon-yellow/60 bg-deep-blue/95 p-3.5 text-[11px] leading-relaxed text-slate-200 shadow-lg"
-	>
-		<h3 class="flex items-center gap-2 text-[11px] font-bold tracking-wider text-white uppercase">
-			<ShieldQuestion class="h-4 w-4 text-neon-yellow" />
-			<span>Data status: real NISAR observations</span>
-		</h3>
-		<p class="mt-1.5">
-			Every image here is a real {s.sensor.backscatter_product} pass and every coherence layer a real
-			{s.sensor.insar_product} pair, read from NASA's ASF DAAC archive. The detected areas are measured
-			from those images. The products are provisional, so values can change when ASF reprocesses them.
-		</p>
-	</section>
-{:else}
-	<section
-		class="rounded-lg border border-rocket-red/70 bg-deep-blue/95 p-3.5 text-[11px] leading-relaxed text-slate-200 shadow-lg"
-	>
-		<h3 class="flex items-center gap-2 text-[11px] font-bold tracking-wider text-white uppercase">
-			<ShieldQuestion class="h-4 w-4 text-[#ff7f5c]" />
-			<span>Data status: simulated</span>
-		</h3>
-		<p class="mt-1.5">
-			These radar images are <strong>synthetic</strong>, generated from NISAR mission parameters to
-			demonstrate the method. They are not satellite observations. The site, operator and permit are
-			fictional and the location is illustrative. Every number shown is measured from the simulated
-			images by the detection steps below, not typed in.
-		</p>
-		<p class="mt-1.5">
-			With real data, backscatter would come from {s.sensor.backscatter_product}, and coherence and
-			displacement from {s.sensor.insar_product}, searched via NASA Earthdata and ASF.
-		</p>
-	</section>
-{/if}
+<section
+	class="rounded-lg border border-neon-yellow/60 bg-deep-blue/95 p-3.5 text-[11px] leading-relaxed text-slate-200 shadow-lg"
+>
+	<h3 class="flex items-center gap-2 text-[11px] font-bold tracking-wider text-white uppercase">
+		<ShieldQuestion class="h-4 w-4 text-neon-yellow" />
+		<span>Data status: real NISAR observations</span>
+	</h3>
+	<p class="mt-1.5">
+		Every radar image here is a real {s.sensor.backscatter_product} pass and every InSAR layer a real
+		{s.sensor.insar_product} pair, read from NASA's ASF DAAC archive{s.module === 'slope'
+			? '; terrain slope comes from NASADEM (NASA/JPL, LP DAAC)'
+			: ''}. Every area and rate is measured from those files. The NISAR products are provisional,
+		so values can change when ASF reprocesses them.
+	</p>
+</section>
 
 <section
 	class="brand-pattern-fiduciaries rounded-lg border border-yonder-500/40 bg-deep-blue/95 p-3.5 text-[11px] leading-relaxed text-slate-200 shadow-lg"
@@ -89,16 +62,8 @@
 		{#each steps as step (step)}<li>{step}</li>{/each}
 	</ol>
 	<p class="mt-2 rounded border border-yonder-500/30 bg-deep-blue/90 p-2">
-		{#if s.validation.precision !== null && s.validation.recall !== null}
-			<strong class="text-white">Detector accuracy on this simulation:</strong>
-			precision {Math.round(s.validation.precision * 100)}%, recall {Math.round(
-				s.validation.recall * 100
-			)}%.
-			{s.validation.note} Real scenes are harder: slope, moisture and crop changes also shift backscatter.
-		{:else}
-			<strong class="text-white">Accuracy: not yet validated.</strong>
-			{s.validation.note}
-		{/if}
+		<strong class="text-white">Accuracy: not yet validated.</strong>
+		{s.validation.note}
 	</p>
 	<h4 class="mt-3 font-bold text-white">NASA resources this method follows</h4>
 	<ul class="mt-1 space-y-1">

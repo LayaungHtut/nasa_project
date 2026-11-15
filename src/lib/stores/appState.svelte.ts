@@ -23,6 +23,12 @@ class AppState {
 		const p = findPatch(this.scenario, this.selectedPatchId);
 		return p && p.epoch === this.epochIndex ? p : null;
 	});
+	/** Moving-slope candidate picked in the slope module (candidates span every pair, so no pass check). */
+	selectedCandidate = $derived(
+		this.scenario.module === 'slope'
+			? (this.scenario.candidates.find((c) => c.candidate_id === this.selectedPatchId) ?? null)
+			: null
+	);
 	/** Bumped on each pick, so the map zooms to a patch only when one is picked (not on every pass change). */
 	patchFocus = $state(0);
 

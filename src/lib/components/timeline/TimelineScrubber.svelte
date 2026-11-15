@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { appState } from '$lib/stores/appState.svelte';
-	import { compliance, forensics, observedStatus, shortDate } from '$lib/data/scenarios';
+	import { observedStatus, shortDate } from '$lib/data/scenarios';
 	import { Calendar, Play, Pause, TriangleAlert } from 'lucide-svelte';
 
 	let scenario = $derived(appState.scenario);
@@ -9,14 +9,12 @@
 	let playingId = $state<string | null>(null);
 	// The judge tour drives the pass itself, so playback pauses while it runs.
 	let isPlaying = $derived(playingId === appState.scenarioId && !appState.isDemoModeActive);
-	/** Passes where an alert first fires get a marker on the track. */
-	let flagged = $derived.by(() => {
-		const s = scenario;
-		if (s.module === 'observed') return new Set([observedStatus(s, 0).firstChange]);
-		if (s.module === 'mining') return new Set([compliance(s, 0).firstBreach]);
-		const f = forensics(s, 0);
-		return new Set([f.slideEpoch, f.diversionEpoch]);
-	});
+	/** The pass where surface change first passes the null test gets a marker on the track. */
+	let flagged = $derived(
+		scenario.module === 'observed'
+			? new Set([observedStatus(scenario, 0).firstChange])
+			: new Set<number>()
+	);
 
 	$effect(() => {
 		if (!isPlaying) return;
@@ -39,9 +37,9 @@
 		<div class="flex items-center gap-2">
 			<Calendar class="h-4 w-4 text-yonder-400" />
 			<span class="text-[11px] font-bold tracking-wider text-white uppercase">
-				{observations.length} NISAR passes · {scenario.data_status === 'REAL'
-					? `Track ${scenario.module === 'observed' ? scenario.provenance.track : ''} · real`
-					: `${scenario.sensor.repeat_days}-day repeat · simulated`}
+				{observations.length}
+				{scenario.module === 'slope' ? 'NISAR 12-day pairs' : 'NISAR passes'} · Track {scenario
+					.provenance.track} · real
 			</span>
 		</div>
 		<div class="flex items-center gap-1.5">
@@ -62,15 +60,20 @@
 		</div>
 	</div>
 
-	<!-- Horizontal Timeline Track -->
-	<div class="relative flex items-center justify-between px-3 pt-2 pb-1">
+	<!-- Horizontal Timeline Track: scrolls inside itself when there are more passes than fit -->
+	<div
+		class="relative flex min-w-full items-center justify-between gap-1 overflow-x-auto px-3 pt-2 pb-1"
+	>
 		<!-- Track line -->
 		<div class="absolute top-5 right-6 left-6 h-0.5 bg-electric-blue"></div>
 
 		{#each observations as obs, idx (obs.date)}
 			{@const selected = appState.epochIndex === idx}
 			{@const dateStr = `Day ${obs.day} · ${shortDate(obs.date)}`}
-			<div class="relative z-10 flex flex-col items-center">
+			<!-- With many passes, only the ends and the selected one keep a visible label (all keep aria-labels). -->
+			{@const labelled =
+				observations.length <= 8 || selected || idx === 0 || idx === observations.length - 1}
+			<div class="relative z-10 flex shrink-0 flex-col items-center">
 				<button
 					type="button"
 					onclick={() => {
@@ -94,7 +97,7 @@
 				</button>
 
 				<!-- Date and label below node -->
-				<div class="mt-1 text-center">
+				<div class="mt-1 text-center {labelled ? '' : 'invisible w-0'}">
 					<span
 						class="font-mono-telemetry block text-[10px] {selected
 							? 'font-bold text-neon-yellow'

@@ -1,0 +1,730 @@
+{
+ "id": "hpakant-slopes",
+ "module": "slope",
+ "data_status": "REAL",
+ "title": "Hpakant slope motion (real NISAR InSAR)",
+ "location": {
+  "name": "Hpakant slopes",
+  "region": "Kachin State, Myanmar",
+  "center": [
+   96.32437,
+   25.64748
+  ],
+  "zoom": 12,
+  "image_coordinates": [
+   [
+    96.246758,
+    25.721397
+   ],
+   [
+    96.405191,
+    25.717778
+   ],
+   [
+    96.401116,
+    25.57427
+   ],
+   [
+    96.242872,
+    25.577866
+   ]
+  ]
+ },
+ "story": {
+  "headline": "Real NISAR InSAR over Hpakant's landslide-prone mine slopes",
+  "context": "Mine-waste slopes around Hpakant fail often, most deadly in the monsoon. 21 real NISAR interferograms (12- and 24-day pairs) from 2026-01-01 to 2026-10-16 measure how the ground moved along the radar's line of sight. 1 patch of steep ground (5.1 ha in all) moved faster than 3x the scatter on flat reference ground (2.7 cm/yr). Each is a place to check, not a confirmed landslide.",
+  "radar_insight": "InSAR compares the phase of two passes 12 or 24 days apart: a shift of half the 24 cm wavelength means the ground moved 12 cm closer to or further from the satellite. Only motion along that line of sight is measured, not elevation or downslope movement, and ground that changes too much between passes (dug pits, dense wet forest) loses coherence and cannot be read."
+ },
+ "sensor": {
+  "mission": "NASA-ISRO SAR (NISAR)",
+  "band": "L-band",
+  "wavelength_cm": 24.4,
+  "repeat_days": 12,
+  "backscatter_product": "NISAR L2 GCOV HV (radar backdrop)",
+  "insar_product": "NISAR L2 GUNW (unwrapped phase, coherence, ionosphere screen)",
+  "polarization": "HH (InSAR)",
+  "pixel_m": 80.0,
+  "looks": 0
+ },
+ "epochs": [
+  {
+   "date": "2026-01-13",
+   "day": -276,
+   "label": "First pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_0.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_0.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_0.png",
+   "granule_id": "NISAR_L2_PR_GCOV_010_062_D_075_2005_QPDH_A_20260113T121712_20260113T121747_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_009_062_D_075_010_2000_SH_20260101T121711_20260101T121746_20260113T121712_20260113T121747_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-01-01",
+    "2026-01-13"
+   ]
+  },
+  {
+   "date": "2026-01-25",
+   "day": -264,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_1.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_1.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_1.png",
+   "granule_id": "NISAR_L2_PR_GCOV_011_062_D_075_2005_QPDH_A_20260125T121713_20260125T121747_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_010_062_D_075_011_2000_SH_20260113T121712_20260113T121747_20260125T121713_20260125T121747_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-01-13",
+    "2026-01-25"
+   ]
+  },
+  {
+   "date": "2026-02-06",
+   "day": -252,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_2.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_2.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_2.png",
+   "granule_id": "NISAR_L2_PR_GCOV_012_062_D_075_2005_QPDH_A_20260206T121713_20260206T121748_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_011_062_D_075_012_2000_SH_20260125T121713_20260125T121747_20260206T121713_20260206T121748_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-01-25",
+    "2026-02-06"
+   ]
+  },
+  {
+   "date": "2026-02-18",
+   "day": -240,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_3.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_3.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_3.png",
+   "granule_id": "NISAR_L2_PR_GCOV_013_062_D_075_2005_QPDH_A_20260218T121714_20260218T121748_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_012_062_D_075_013_2000_SH_20260206T121713_20260206T121748_20260218T121714_20260218T121748_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-02-06",
+    "2026-02-18"
+   ]
+  },
+  {
+   "date": "2026-03-14",
+   "day": -216,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_4.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_4.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_4.png",
+   "granule_id": "NISAR_L2_PR_GCOV_015_062_D_075_2005_QPDH_A_20260314T121715_20260314T121749_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_013_062_D_075_015_2000_SH_20260218T121714_20260218T121748_20260314T121715_20260314T121749_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-02-18",
+    "2026-03-14"
+   ]
+  },
+  {
+   "date": "2026-03-26",
+   "day": -204,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_5.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_5.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_5.png",
+   "granule_id": "NISAR_L2_PR_GCOV_016_062_D_075_4005_DHDH_A_20260326T121715_20260326T121749_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_015_062_D_075_016_2000_SH_20260314T121715_20260314T121749_20260326T121715_20260326T121749_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-03-14",
+    "2026-03-26"
+   ]
+  },
+  {
+   "date": "2026-04-07",
+   "day": -192,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_6.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_6.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_6.png",
+   "granule_id": "NISAR_L2_PR_GCOV_017_062_D_075_2005_QPDH_A_20260407T121715_20260407T121749_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_016_062_D_075_017_2000_SH_20260326T121715_20260326T121749_20260407T121715_20260407T121749_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-03-26",
+    "2026-04-07"
+   ]
+  },
+  {
+   "date": "2026-04-19",
+   "day": -180,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_7.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_7.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_7.png",
+   "granule_id": "NISAR_L2_PR_GCOV_018_062_D_075_4005_DHDH_A_20260419T121715_20260419T121749_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_017_062_D_075_018_2000_SH_20260407T121715_20260407T121749_20260419T121715_20260419T121749_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-04-07",
+    "2026-04-19"
+   ]
+  },
+  {
+   "date": "2026-05-01",
+   "day": -168,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_8.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_8.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_8.png",
+   "granule_id": "NISAR_L2_PR_GCOV_019_062_D_075_2005_QPDH_A_20260501T121714_20260501T121749_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_018_062_D_075_019_2000_SH_20260419T121715_20260419T121749_20260501T121714_20260501T121749_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-04-19",
+    "2026-05-01"
+   ]
+  },
+  {
+   "date": "2026-05-13",
+   "day": -156,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_9.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_9.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_9.png",
+   "granule_id": "NISAR_L2_PR_GCOV_020_062_D_075_4005_DHDH_A_20260513T121714_20260513T121748_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_019_062_D_075_020_2000_SH_20260501T121714_20260501T121749_20260513T121714_20260513T121748_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-05-01",
+    "2026-05-13"
+   ]
+  },
+  {
+   "date": "2026-05-25",
+   "day": -144,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_10.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_10.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_10.png",
+   "granule_id": "NISAR_L2_PR_GCOV_021_062_D_075_2005_QPDH_A_20260525T121713_20260525T121748_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_020_062_D_075_021_2000_SH_20260513T121714_20260513T121748_20260525T121713_20260525T121748_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-05-13",
+    "2026-05-25"
+   ]
+  },
+  {
+   "date": "2026-06-18",
+   "day": -120,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_11.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_11.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_11.png",
+   "granule_id": "NISAR_L2_PR_GCOV_023_062_D_075_2005_QPDH_A_20260618T121712_20260618T121746_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_021_062_D_075_023_2000_SH_20260525T121713_20260525T121748_20260618T121712_20260618T121746_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-05-25",
+    "2026-06-18"
+   ]
+  },
+  {
+   "date": "2026-06-30",
+   "day": -108,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_12.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_12.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_12.png",
+   "granule_id": "NISAR_L2_PR_GCOV_024_062_D_075_4005_DHDH_A_20260630T121711_20260630T121745_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_023_062_D_075_024_2000_SH_20260618T121712_20260618T121746_20260630T121711_20260630T121745_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-06-18",
+    "2026-06-30"
+   ]
+  },
+  {
+   "date": "2026-07-12",
+   "day": -96,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_13.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_13.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_13.png",
+   "granule_id": "NISAR_L2_PR_GCOV_025_062_D_075_2005_QPDH_A_20260712T121710_20260712T121745_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_024_062_D_075_025_2000_SH_20260630T121711_20260630T121745_20260712T121710_20260712T121745_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-06-30",
+    "2026-07-12"
+   ]
+  },
+  {
+   "date": "2026-07-24",
+   "day": -84,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_14.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_14.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_14.png",
+   "granule_id": "NISAR_L2_PR_GCOV_026_062_D_075_4005_DHDH_A_20260724T121709_20260724T121744_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_025_062_D_075_026_2000_SH_20260712T121710_20260712T121745_20260724T121709_20260724T121744_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-07-12",
+    "2026-07-24"
+   ]
+  },
+  {
+   "date": "2026-08-17",
+   "day": -60,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_15.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_15.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_15.png",
+   "granule_id": "NISAR_L2_PR_GCOV_028_062_D_075_4005_DHDH_A_20260817T121708_20260817T121743_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_026_062_D_075_028_4000_SH_20260724T121709_20260724T121744_20260817T121708_20260817T121743_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-07-24",
+    "2026-08-17"
+   ]
+  },
+  {
+   "date": "2026-08-29",
+   "day": -48,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_16.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_16.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_16.png",
+   "granule_id": "NISAR_L2_PR_GCOV_029_062_D_075_2005_QPDH_A_20260829T121708_20260829T121743_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_028_062_D_075_029_2000_SH_20260817T121708_20260817T121743_20260829T121708_20260829T121743_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-08-17",
+    "2026-08-29"
+   ]
+  },
+  {
+   "date": "2026-09-10",
+   "day": -36,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_17.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_17.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_17.png",
+   "granule_id": "NISAR_L2_PR_GCOV_030_062_D_075_4005_DHDH_A_20260910T121708_20260910T121743_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_029_062_D_075_030_2000_SH_20260829T121708_20260829T121743_20260910T121708_20260910T121743_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-08-29",
+    "2026-09-10"
+   ]
+  },
+  {
+   "date": "2026-09-22",
+   "day": -24,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_18.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_18.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_18.png",
+   "granule_id": "NISAR_L2_PR_GCOV_031_062_D_075_2005_QPDH_A_20260922T121708_20260922T121743_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_030_062_D_075_031_2000_SH_20260910T121708_20260910T121743_20260922T121708_20260922T121743_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-09-10",
+    "2026-09-22"
+   ]
+  },
+  {
+   "date": "2026-10-04",
+   "day": -12,
+   "label": "Pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_19.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_19.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_19.png",
+   "granule_id": "NISAR_L2_PR_GCOV_032_062_D_075_4005_DHDH_A_20261004T121708_20261004T121743_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_031_062_D_075_032_2000_SH_20260922T121708_20260922T121743_20261004T121708_20261004T121743_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-09-22",
+    "2026-10-04"
+   ]
+  },
+  {
+   "date": "2026-10-16",
+   "day": 0,
+   "label": "Latest pair",
+   "sar_url": "/scenarios/hpakant-slopes/sar_20.png",
+   "coherence_url": "/scenarios/hpakant-slopes/coherence_20.png",
+   "displacement_url": "/scenarios/hpakant-slopes/los_20.png",
+   "granule_id": "NISAR_L2_PR_GCOV_033_062_D_075_2005_QPDH_A_20261016T121708_20261016T121743_P05023_N_F_J_001",
+   "gunw_granule_id": "NISAR_L2_PR_GUNW_032_062_D_075_033_2000_SH_20261004T121708_20261004T121743_20261016T121708_20261016T121743_P05023_N_F_J_001",
+   "coherence_pair": [
+    "2026-10-04",
+    "2026-10-16"
+   ]
+  }
+ ],
+ "metrics": [
+  {
+   "measured_pct": 69.6,
+   "reference_scatter_cm": 1.58,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 69.6
+  },
+  {
+   "measured_pct": 62.4,
+   "reference_scatter_cm": 0.86,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 57.5
+  },
+  {
+   "measured_pct": 24.4,
+   "reference_scatter_cm": 0.56,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 58.3
+  },
+  {
+   "measured_pct": 31.6,
+   "reference_scatter_cm": 0.53,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 36.9
+  },
+  {
+   "measured_pct": 26.3,
+   "reference_scatter_cm": 0.54,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 41.7
+  },
+  {
+   "measured_pct": 60.6,
+   "reference_scatter_cm": 0.48,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 37.3
+  },
+  {
+   "measured_pct": 26.0,
+   "reference_scatter_cm": 0.54,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 27.2
+  },
+  {
+   "measured_pct": 29.2,
+   "reference_scatter_cm": 0.54,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 32.7
+  },
+  {
+   "measured_pct": 0.0,
+   "reference_scatter_cm": null,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 22.3
+  },
+  {
+   "measured_pct": 65.4,
+   "reference_scatter_cm": 1.01,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 30.7
+  },
+  {
+   "measured_pct": 66.1,
+   "reference_scatter_cm": 1.21,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 29.3
+  },
+  {
+   "measured_pct": 25.6,
+   "reference_scatter_cm": 0.68,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 22.7
+  },
+  {
+   "measured_pct": 66.6,
+   "reference_scatter_cm": 0.92,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 30.6
+  },
+  {
+   "measured_pct": 65.8,
+   "reference_scatter_cm": 0.53,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 29.7
+  },
+  {
+   "measured_pct": 61.9,
+   "reference_scatter_cm": 0.78,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 37.0
+  },
+  {
+   "measured_pct": 0.0,
+   "reference_scatter_cm": null,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 28.3
+  },
+  {
+   "measured_pct": 79.7,
+   "reference_scatter_cm": 0.39,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 28.1
+  },
+  {
+   "measured_pct": 81.6,
+   "reference_scatter_cm": 0.57,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 36.1
+  },
+  {
+   "measured_pct": 63.9,
+   "reference_scatter_cm": 0.49,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 34.2
+  },
+  {
+   "measured_pct": 74.6,
+   "reference_scatter_cm": 0.42,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 41.9
+  },
+  {
+   "measured_pct": 78.6,
+   "reference_scatter_cm": 0.63,
+   "gap_before_days": 0,
+   "rate_coverage_pct": 41.6
+  }
+ ],
+ "candidates": [
+  {
+   "candidate_id": "s-1",
+   "area_m2": 51200,
+   "slope_deg": 21.6,
+   "rate_cm_yr": 17.7,
+   "direction": "toward",
+   "sign_agreement": 0.74,
+   "pairs_measured": 15,
+   "series_cm": [
+    1.94,
+    2.82,
+    2.64,
+    2.99,
+    null,
+    2.69,
+    3.04,
+    3.27,
+    null,
+    2.57,
+    5.12,
+    null,
+    5.96,
+    5.71,
+    7.21,
+    null,
+    7.51,
+    7.87,
+    7.73,
+    8.44,
+    9.36
+   ],
+   "centroid": [
+    96.305317,
+    25.70709
+   ],
+   "bbox": [
+    96.304481,
+    25.705629,
+    96.306153,
+    25.70855
+   ]
+  }
+ ],
+ "reference_series_cm": [
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  null,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  null,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0
+ ],
+ "thresholds": {
+  "coherence_min": 0.3,
+  "flat_max_deg": 5.0,
+  "slope_min_deg": 20.0,
+  "min_valid_frac": 0.6,
+  "sigma_k": 3.0,
+  "sign_agreement_min": 0.65,
+  "min_cluster_m2": 19200,
+  "display_cm_yr": 15.0
+ },
+ "uncertainty": {
+  "rate_sigma_cm_yr": 2.72,
+  "reference_m2": 13516800,
+  "rate_coverage_pct": 41.6,
+  "unmeasured_gap_days": 0,
+  "centre_rate_cm_yr": 0.4,
+  "rim_rate_cm_yr": 2.3,
+  "residual_rate_vs_elevation_cm_yr_per_100m": 0.13,
+  "unread_pairs": [
+   "2026-04-19 to 2026-05-01",
+   "2026-07-24 to 2026-08-17"
+  ],
+  "rule_pass_flat_pct": 1.2,
+  "rule_pass_steep_pct": 6.2,
+  "notes": [
+   "Line-of-sight only: the satellite looks down at about 44 degrees from vertical, so a slope sliding downhill can read as toward, away or near zero depending on which way it faces.",
+   "Relative motion: every pair is tied to flat, coherent ground in the same connected component; motion of that reference ground itself is not seen.",
+   "Atmosphere: the product's ionosphere phase screen is subtracted. Pair by pair, a planar ramp (leftover ionosphere or orbit error) and a linear trend with NASADEM elevation (height-dependent troposphere) are fitted on ground under 20 degrees and removed (height trends ranged -0.9 to +0.5 cm per 100 m). Real motion spread across the whole 16 km window would be removed too. Patchy, turbulent water vapour is not corrected; its noise is part of the reference scatter.",
+   "Null comparison: the same speed-and-direction rule passes 1.2% of flat reference pixels and 6.2% of steep ones. Steep pixels are read on fewer pairs, so their rates are noisier and part of that excess may be noise.",
+   "No usable phase in this window for 2 pairs (2026-04-19 to 2026-05-01; 2026-07-24 to 2026-08-17): the unwrapper assigned no connected component, so those 36 days are not counted.",
+   "A broad pattern remains after the corrections: the median rate is +0.4 cm/yr within 3 km of the window centre (the mining valley) and +2.3 cm/yr beyond 6 km. It may be real ground motion or leftover atmosphere; this data cannot tell which. A candidate in the outer zone may be part of that pattern rather than a separate moving slope.",
+   "Unwrapping errors (whole 2 pi jumps) inside a connected component are not detected.",
+   "Not yet validated against field reports, GNSS or optical imagery."
+  ]
+ },
+ "provenance": {
+  "source_archive": "ASF DAAC (NASA Earthdata)",
+  "track": 62,
+  "frame": 75,
+  "orbit_direction": "Descending",
+  "epsg": 32646,
+  "gunw_granules": [
+   "NISAR_L2_PR_GUNW_009_062_D_075_010_2000_SH_20260101T121711_20260101T121746_20260113T121712_20260113T121747_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_010_062_D_075_011_2000_SH_20260113T121712_20260113T121747_20260125T121713_20260125T121747_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_011_062_D_075_012_2000_SH_20260125T121713_20260125T121747_20260206T121713_20260206T121748_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_012_062_D_075_013_2000_SH_20260206T121713_20260206T121748_20260218T121714_20260218T121748_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_013_062_D_075_015_2000_SH_20260218T121714_20260218T121748_20260314T121715_20260314T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_015_062_D_075_016_2000_SH_20260314T121715_20260314T121749_20260326T121715_20260326T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_016_062_D_075_017_2000_SH_20260326T121715_20260326T121749_20260407T121715_20260407T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_017_062_D_075_018_2000_SH_20260407T121715_20260407T121749_20260419T121715_20260419T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_018_062_D_075_019_2000_SH_20260419T121715_20260419T121749_20260501T121714_20260501T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_019_062_D_075_020_2000_SH_20260501T121714_20260501T121749_20260513T121714_20260513T121748_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_020_062_D_075_021_2000_SH_20260513T121714_20260513T121748_20260525T121713_20260525T121748_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_021_062_D_075_023_2000_SH_20260525T121713_20260525T121748_20260618T121712_20260618T121746_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_023_062_D_075_024_2000_SH_20260618T121712_20260618T121746_20260630T121711_20260630T121745_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_024_062_D_075_025_2000_SH_20260630T121711_20260630T121745_20260712T121710_20260712T121745_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_025_062_D_075_026_2000_SH_20260712T121710_20260712T121745_20260724T121709_20260724T121744_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_026_062_D_075_028_4000_SH_20260724T121709_20260724T121744_20260817T121708_20260817T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_028_062_D_075_029_2000_SH_20260817T121708_20260817T121743_20260829T121708_20260829T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_029_062_D_075_030_2000_SH_20260829T121708_20260829T121743_20260910T121708_20260910T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_030_062_D_075_031_2000_SH_20260910T121708_20260910T121743_20260922T121708_20260922T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_031_062_D_075_032_2000_SH_20260922T121708_20260922T121743_20261004T121708_20261004T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GUNW_032_062_D_075_033_2000_SH_20261004T121708_20261004T121743_20261016T121708_20261016T121743_P05023_N_F_J_001"
+  ],
+  "gcov_granules": [
+   "NISAR_L2_PR_GCOV_010_062_D_075_2005_QPDH_A_20260113T121712_20260113T121747_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_011_062_D_075_2005_QPDH_A_20260125T121713_20260125T121747_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_012_062_D_075_2005_QPDH_A_20260206T121713_20260206T121748_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_013_062_D_075_2005_QPDH_A_20260218T121714_20260218T121748_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_015_062_D_075_2005_QPDH_A_20260314T121715_20260314T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_016_062_D_075_4005_DHDH_A_20260326T121715_20260326T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_017_062_D_075_2005_QPDH_A_20260407T121715_20260407T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_018_062_D_075_4005_DHDH_A_20260419T121715_20260419T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_019_062_D_075_2005_QPDH_A_20260501T121714_20260501T121749_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_020_062_D_075_4005_DHDH_A_20260513T121714_20260513T121748_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_021_062_D_075_2005_QPDH_A_20260525T121713_20260525T121748_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_023_062_D_075_2005_QPDH_A_20260618T121712_20260618T121746_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_024_062_D_075_4005_DHDH_A_20260630T121711_20260630T121745_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_025_062_D_075_2005_QPDH_A_20260712T121710_20260712T121745_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_026_062_D_075_4005_DHDH_A_20260724T121709_20260724T121744_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_028_062_D_075_4005_DHDH_A_20260817T121708_20260817T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_029_062_D_075_2005_QPDH_A_20260829T121708_20260829T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_030_062_D_075_4005_DHDH_A_20260910T121708_20260910T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_031_062_D_075_2005_QPDH_A_20260922T121708_20260922T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_032_062_D_075_4005_DHDH_A_20261004T121708_20261004T121743_P05023_N_F_J_001",
+   "NISAR_L2_PR_GCOV_033_062_D_075_2005_QPDH_A_20261016T121708_20261016T121743_P05023_N_F_J_001"
+  ],
+  "dem": {
+   "product": "NASADEM_HGT v001 tile n25e096 (NASA/JPL, LP DAAC)",
+   "url": "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/NASADEM_HGT.001/NASADEM_HGT_n25e096/NASADEM_HGT_n25e096.zip"
+  },
+  "sign_convention": {
+   "statement": "Positive = toward the satellite; d = (unwrappedPhase - ionospherePhaseScreen) x wavelength / 4 pi",
+   "source": "https://github.com/isce-framework/isce3/blob/develop/python/packages/nisar/workflows/solid_earth_tides.py"
+  }
+ },
+ "validation": {
+  "note": "No independent reference yet: no field, GNSS or optical check of these slopes.",
+  "recall": null,
+  "precision": null
+ },
+ "geojson": {
+  "type": "FeatureCollection",
+  "features": [
+   {
+    "type": "Feature",
+    "properties": {
+     "kind": "slope_motion",
+     "patch_id": "s-1",
+     "area_m2": 51200,
+     "rate_cm_yr": 17.7
+    },
+    "geometry": {
+     "type": "Polygon",
+     "coordinates": [
+      [
+       [
+        96.306073,
+        25.705629
+       ],
+       [
+        96.305277,
+        25.705647
+       ],
+       [
+        96.305297,
+        25.706368
+       ],
+       [
+        96.305317,
+        25.70709
+       ],
+       [
+        96.304521,
+        25.707108
+       ],
+       [
+        96.303725,
+        25.707126
+       ],
+       [
+        96.303745,
+        25.707847
+       ],
+       [
+        96.304561,
+        25.70855
+       ],
+       [
+        96.305357,
+        25.708532
+       ],
+       [
+        96.305357,
+        25.708532
+       ],
+       [
+        96.305357,
+        25.708532
+       ],
+       [
+        96.305337,
+        25.707811
+       ],
+       [
+        96.306113,
+        25.707072
+       ],
+       [
+        96.306909,
+        25.707053
+       ],
+       [
+        96.306889,
+        25.706332
+       ],
+       [
+        96.30687,
+        25.705611
+       ],
+       [
+        96.306073,
+        25.705629
+       ]
+      ]
+     ]
+    }
+   }
+  ]
+ }
+}

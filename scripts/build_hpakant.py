@@ -52,7 +52,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 
-import build_scenarios as bs  # noqa: E402  (shared helpers: Grid, clean, ramps)
+import sar_common as bs  # noqa: E402  (shared helpers: Grid, clean, ramps)
 from services.processing.geo import corner_coordinates, utm_zone_from_epsg  # noqa: E402
 from services.processing.speckle import lee_filter  # noqa: E402
 
@@ -256,8 +256,7 @@ def main() -> int:
     OUT_STATIC.mkdir(parents=True, exist_ok=True)
     for old in OUT_STATIC.glob("*.png"):
         old.unlink()
-    grid = bs.Grid.__new__(bs.Grid)
-    grid.x, grid.y, grid.zone, grid.letter = x, y, zone, letter
+    grid = bs.Grid(x, y, zone, letter)
     last = date.fromisoformat(kept[-1]["date"])
     # Confirmed, cleaned change on each pass that has a pass before it to confirm against.
     loss_c = {k: bs.clean(confirmed(loss_f, k), min_px) for k in range(3, len(kept))}
