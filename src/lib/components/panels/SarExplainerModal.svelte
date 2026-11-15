@@ -383,8 +383,8 @@
 						<p>
 							Smooth water often reflects radar energy away from the sensor and appears dark. The
 							return also depends on wind, surface roughness, viewing geometry and polarization.
-							There is no universal water threshold; each scene needs its own threshold, and a
-							threshold crossing alone does not confirm a flood.
+							There is no universal water threshold, so each scene needs its own, chosen from its
+							backscatter histogram. A river that moves shows up as a dark line in a new place.
 						</p>
 					</div>
 				{:else if activeMode === 'diffuse_land'}
@@ -420,21 +420,9 @@
 				>
 					<span>Mission: NASA-ISRO Synthetic Aperture Radar (NISAR)</span>
 					<span class="font-mono-telemetry text-neon-yellow"
-						>Pixel spacing: 10m in this case study</span
+						>L-band, 24 cm wavelength, 12-day repeat</span
 					>
 				</div>
-				{#if appState.isDemoModeActive}
-					<!-- This modal covers the tour bar, so the tour continues from here. -->
-					<div class="mt-3 flex justify-end">
-						<button
-							type="button"
-							class="brand-btn-primary rounded-md px-4 py-1.5 text-xs shadow-md"
-							onclick={() => appState.nextDemoStep()}
-						>
-							Continue tour →
-						</button>
-					</div>
-				{/if}
 			</div>
 		</div>
 	</div>

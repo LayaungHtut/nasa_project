@@ -32,9 +32,10 @@ def signed_url(session, url: str) -> str:
 
 
 @contextmanager
-def open_remote_granule(session, url: str) -> Iterator[IO[bytes]]:
-    """Yield a seekable file object for an ASF granule, for h5py.File(...)."""
+def open_remote_granule(session, url: str, block_size: int = BLOCK_SIZE) -> Iterator[IO[bytes]]:
+    """Yield a seekable file object for an ASF granule, for h5py.File(...).
+    A smaller block_size wastes less on scattered HDF5 metadata reads over slow links."""
     # A stalled range request otherwise waits forever; fail it so the caller can retry.
     fs = fsspec.filesystem("http", client_kwargs={"timeout": aiohttp.ClientTimeout(sock_connect=30, sock_read=60)})
-    with fs.open(signed_url(session, url), "rb", block_size=BLOCK_SIZE, cache_type="blockcache") as fobj:
+    with fs.open(signed_url(session, url), "rb", block_size=block_size, cache_type="blockcache") as fobj:
         yield fobj
